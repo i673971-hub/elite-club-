@@ -962,6 +962,14 @@
 
   signOutBtn.addEventListener('click', () => auth.signOut());
 
+  function normalizeTier(raw) {
+    const clean = (raw || '').toString().trim().toLowerCase();
+    if (clean === 'executive') return 'Executive';
+    if (clean === 'premier') return 'Premier';
+    if (clean === 'founding member' || clean === 'founding') return 'Founding Member';
+    return 'Free';
+  }
+
   const memberLeaderboard = document.getElementById('memberLeaderboard');
   const memberLeaderboardList = document.getElementById('memberLeaderboardList');
   const TIER_ORDER = ['Founding Member', 'Premier', 'Executive', 'Free'];
@@ -977,7 +985,7 @@
       const groups = { 'Founding Member': [], 'Premier': [], 'Executive': [], 'Free': [] };
       snapshot.forEach(doc => {
         const d = doc.data();
-        const tier = ['Executive', 'Premier', 'Founding Member'].includes(d.tier) ? d.tier : 'Free';
+        const tier = normalizeTier(d.tier);
         groups[tier].push(d.name || 'A Member');
       });
       let html = '';
@@ -1001,9 +1009,10 @@
   const adminPanel = document.getElementById('adminPanel');
   const adminMemberList = document.getElementById('adminMemberList');
 
-  function badgeHtml(tier) {
-    const isPaid = ['Executive', 'Premier', 'Founding Member'].includes(tier);
-    const label = isPaid ? tier : 'Free';
+  function badgeHtml(rawTier) {
+    const tier = normalizeTier(rawTier);
+    const isPaid = tier !== 'Free';
+    const label = tier;
     const cls = isPaid ? 'paid' : 'free';
     return '<span class="m-badge ' + cls + '">' + label + '</span>';
   }
@@ -1039,20 +1048,20 @@
 
       const memberRef = db.collection('members').doc(user.email);
       const snap = await memberRef.get();
-      let tier = 'free';
+      let tier = 'Free';
 
       if (!snap.exists) {
         await memberRef.set({
           name: user.displayName || '',
           email: user.email || '',
-          tier: 'free',
+          tier: 'Free',
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
       } else {
-        tier = snap.data().tier || 'free';
+        tier = normalizeTier(snap.data().tier);
       }
 
-      const isPaid = ['Executive', 'Premier', 'Founding Member'].includes(tier);
+      const isPaid = tier !== 'Free';
       memberTierBadge.textContent = isPaid ? tier + ' Member' : 'Free Member';
       freeTierBlock.style.display = isPaid ? 'none' : 'block';
       paidTierBlock.style.display = isPaid ? 'block' : 'none';
