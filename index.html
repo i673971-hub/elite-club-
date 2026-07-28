@@ -365,6 +365,44 @@
     color:var(--brass-bright); letter-spacing:0.02em;
   }
 
+  /* ===== Members / Explore ===== */
+  .members{background:var(--ivory); color:var(--ink);}
+  .members-wrap{max-width:640px; margin:0 auto; text-align:center;}
+  .signin-btn{
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--forest); color:var(--ivory);
+    border:1px solid var(--forest); padding:14px 30px;
+    font-family:'Jost', sans-serif; font-size:0.85rem;
+    letter-spacing:0.05em; cursor:pointer;
+  }
+  .signin-btn:hover{background:var(--forest-2);}
+  .signin-btn svg{width:18px; height:18px;}
+  .member-card{
+    border:1px solid var(--line); background:rgba(28,43,36,0.03);
+    padding:36px 30px; text-align:left;
+  }
+  .member-card .greeting{font-family:'Cormorant Garamond', serif; font-size:1.5rem; margin-bottom:6px;}
+  .member-card .tier-badge{
+    display:inline-block; font-family:'Jost', sans-serif;
+    font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase;
+    padding:4px 12px; border:1px solid var(--brass); color:var(--burgundy);
+    margin-bottom:20px;
+  }
+  .locked-content{
+    border:1px dashed var(--line); padding:26px; text-align:center;
+    color:#8a8272; font-family:'Lora', serif; font-style:italic;
+  }
+  .unlocked-content{
+    border:1px solid var(--brass); padding:26px;
+    background:rgba(176,141,79,0.06);
+  }
+  .unlocked-content h4{font-family:'Cormorant Garamond', serif; color:var(--burgundy); margin-bottom:10px; font-size:1.2rem;}
+  .signout-link{
+    display:block; margin-top:18px; font-family:'Jost', sans-serif;
+    font-size:0.75rem; color:#8a8272; text-decoration:underline; cursor:pointer;
+    background:none; border:none;
+  }
+
   /* ===== Contact ===== */
   .contact{background:var(--forest-2); color:var(--ivory);}
   .contact-wrap{
@@ -501,6 +539,7 @@
     <li><a href="#about">Charter</a></li>
     <li><a href="#events">Calendar</a></li>
     <li><a href="#gallery">Members' Hall</a></li>
+    <li><a href="#members">Explore</a></li>
     <li><a href="#pricing">Membership</a></li>
     <li><a href="#donate">Contribute</a></li>
     <li><a href="#contact">Join Us</a></li>
@@ -582,6 +621,41 @@
     <div class="frame"><span>Add photo &mdash; Reception</span></div>
     <div class="frame"><span>Add photo &mdash; Founders' Dinner</span></div>
     <div class="frame"><span>Add photo &mdash; Members at large</span></div>
+  </div>
+</section>
+
+<section class="members" id="members">
+  <div class="section-head">
+    <span class="eyebrow">Members Area</span>
+    <h2>Explore the Club</h2>
+  </div>
+  <div class="members-wrap">
+    <div id="signedOutView">
+      <p style="margin-bottom:26px; color:#5a5346;">Sign in with Google to explore the members area. Free to join — some content is reserved for paid tiers.</p>
+      <button class="signin-btn" id="googleSignInBtn">
+        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4c-7.7 0-14.3 4.3-17.7 10.7z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.8 14.1-5l-6.5-5.4C29.6 35.1 26.9 36 24 36c-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.5 5.4C41.5 36.2 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+        Sign in with Google
+      </button>
+    </div>
+    <div id="signedInView" style="display:none;">
+      <div class="member-card">
+        <div class="greeting" id="memberGreeting">Welcome back</div>
+        <div class="tier-badge" id="memberTierBadge">Free Member</div>
+        <div id="freeTierBlock">
+          <div class="locked-content">
+            This area — event recaps, member directory, and voting access — is reserved for paid members.<br><br>
+            Choose a tier under <strong>Membership</strong> and complete your application to unlock it.
+          </div>
+        </div>
+        <div id="paidTierBlock" style="display:none;">
+          <div class="unlocked-content">
+            <h4>Welcome, valued member</h4>
+            <p>Thank you for being an Executive, Premier, or Founding Member. Full event recaps, the member directory, and voting access will appear here as they go live.</p>
+          </div>
+        </div>
+        <button class="signout-link" id="signOutBtn">Sign out</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -805,6 +879,70 @@
       setTimeout(() => addMsg(getReply(text), 'bot'), 350);
     });
   })();
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBR33DMmeHyOWokT0eBtwAZGR9D0EhgjHg",
+    authDomain: "elite-club-aaf15.firebaseapp.com",
+    projectId: "elite-club-aaf15",
+    storageBucket: "elite-club-aaf15.firebasestorage.app",
+    messagingSenderId: "335847422435",
+    appId: "1:335847422435:web:d0c4ed44dcfca00704c8d6"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const signInBtn = document.getElementById('googleSignInBtn');
+  const signOutBtn = document.getElementById('signOutBtn');
+  const signedOutView = document.getElementById('signedOutView');
+  const signedInView = document.getElementById('signedInView');
+  const memberGreeting = document.getElementById('memberGreeting');
+  const memberTierBadge = document.getElementById('memberTierBadge');
+  const freeTierBlock = document.getElementById('freeTierBlock');
+  const paidTierBlock = document.getElementById('paidTierBlock');
+
+  signInBtn.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => console.error(err));
+  });
+
+  signOutBtn.addEventListener('click', () => auth.signOut());
+
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      signedOutView.style.display = 'none';
+      signedInView.style.display = 'block';
+      memberGreeting.textContent = 'Welcome, ' + (user.displayName || 'Member');
+
+      const memberRef = db.collection('members').doc(user.uid);
+      const snap = await memberRef.get();
+      let tier = 'free';
+
+      if (!snap.exists) {
+        await memberRef.set({
+          name: user.displayName || '',
+          email: user.email || '',
+          tier: 'free',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } else {
+        tier = snap.data().tier || 'free';
+      }
+
+      const isPaid = ['Executive', 'Premier', 'Founding Member'].includes(tier);
+      memberTierBadge.textContent = isPaid ? tier + ' Member' : 'Free Member';
+      freeTierBlock.style.display = isPaid ? 'none' : 'block';
+      paidTierBlock.style.display = isPaid ? 'block' : 'none';
+    } else {
+      signedOutView.style.display = 'block';
+      signedInView.style.display = 'none';
+    }
+  });
 </script>
 
 </body>
