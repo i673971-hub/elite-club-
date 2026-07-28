@@ -403,6 +403,47 @@
     background:none; border:none;
   }
 
+  .admin-panel{
+    max-width:640px; margin:24px auto 0; text-align:left;
+    border:1px solid var(--line); background:rgba(28,43,36,0.03);
+    padding:26px 24px;
+  }
+  .admin-panel h4{
+    font-family:'Cormorant Garamond', serif; font-size:1.3rem;
+    color:var(--burgundy); margin-bottom:16px;
+  }
+  .admin-row{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:12px 0; border-top:1px solid var(--line);
+  }
+  .admin-row:first-of-type{border-top:none;}
+  .admin-row .m-name{font-size:0.92rem;}
+  .admin-row .m-email{
+    display:block; font-family:'Jost', sans-serif; font-size:0.7rem;
+    color:#8a8272; margin-top:2px;
+  }
+  .m-badge{
+    font-family:'Jost', sans-serif; font-size:0.65rem;
+    letter-spacing:0.08em; text-transform:uppercase;
+    padding:4px 10px; white-space:nowrap; flex-shrink:0;
+  }
+  .m-badge.free{background:rgba(0,0,0,0.06); color:#6b6455;}
+  .m-badge.paid{background:var(--brass); color:var(--forest);}
+
+  .tier-group{margin-bottom:22px;}
+  .tier-group:last-child{margin-bottom:0;}
+  .tier-group-label{
+    font-family:'Jost', sans-serif; font-size:0.68rem;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--brass-bright); margin-bottom:10px;
+    padding-bottom:6px; border-bottom:1px solid var(--line);
+  }
+  .tier-group.free-group .tier-group-label{color:#8a8272;}
+  .lb-member-row{
+    padding:8px 0; font-size:0.9rem;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+
   /* ===== Contact ===== */
   .contact{background:var(--forest-2); color:var(--ivory);}
   .contact-wrap{
@@ -654,6 +695,14 @@
           </div>
         </div>
         <button class="signout-link" id="signOutBtn">Sign out</button>
+      </div>
+      <div class="admin-panel" id="memberLeaderboard" style="display:none;">
+        <h4>Member Leaderboard</h4>
+        <div id="memberLeaderboardList">Loading members…</div>
+      </div>
+      <div class="admin-panel" id="adminPanel" style="display:none;">
+        <h4>All Registered Members</h4>
+        <div id="adminMemberList">Loading members…</div>
       </div>
     </div>
   </div>
@@ -913,13 +962,82 @@
 
   signOutBtn.addEventListener('click', () => auth.signOut());
 
+  const memberLeaderboard = document.getElementById('memberLeaderboard');
+  const memberLeaderboardList = document.getElementById('memberLeaderboardList');
+  const TIER_ORDER = ['Founding Member', 'Premier', 'Executive', 'Free'];
+
+  async function loadPublicLeaderboard() {
+    memberLeaderboardList.textContent = 'Loading members…';
+    try {
+      const snapshot = await db.collection('members').get();
+      if (snapshot.empty) {
+        memberLeaderboardList.textContent = 'No members have registered yet.';
+        return;
+      }
+      const groups = { 'Founding Member': [], 'Premier': [], 'Executive': [], 'Free': [] };
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        const tier = ['Executive', 'Premier', 'Founding Member'].includes(d.tier) ? d.tier : 'Free';
+        groups[tier].push(d.name || 'A Member');
+      });
+      let html = '';
+      TIER_ORDER.forEach(tier => {
+        if (groups[tier].length === 0) return;
+        const groupClass = tier === 'Free' ? 'tier-group free-group' : 'tier-group';
+        html += '<div class="' + groupClass + '"><div class="tier-group-label">' + tier + '</div>';
+        groups[tier].forEach(name => {
+          html += '<div class="lb-member-row">' + name + '</div>';
+        });
+        html += '</div>';
+      });
+      memberLeaderboardList.innerHTML = html;
+    } catch (err) {
+      memberLeaderboardList.textContent = 'Could not load members.';
+      console.error(err);
+    }
+  }
+
+  const ADMIN_EMAIL = 'i673971@gmail.com';
+  const adminPanel = document.getElementById('adminPanel');
+  const adminMemberList = document.getElementById('adminMemberList');
+
+  function badgeHtml(tier) {
+    const isPaid = ['Executive', 'Premier', 'Founding Member'].includes(tier);
+    const label = isPaid ? tier : 'Free';
+    const cls = isPaid ? 'paid' : 'free';
+    return '<span class="m-badge ' + cls + '">' + label + '</span>';
+  }
+
+  async function loadAllMembersForAdmin() {
+    adminMemberList.textContent = 'Loading members…';
+    try {
+      const snapshot = await db.collection('members').get();
+      if (snapshot.empty) {
+        adminMemberList.textContent = 'No members have registered yet.';
+        return;
+      }
+      let html = '';
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        html += '<div class="admin-row"><div class="m-name">' +
+          (d.name || 'Unnamed') +
+          '<span class="m-email">' + (d.email || '') + '</span></div>' +
+          badgeHtml(d.tier || 'free') + '</div>';
+      });
+      adminMemberList.innerHTML = html;
+    } catch (err) {
+      adminMemberList.textContent = 'Could not load members.';
+      console.error(err);
+    }
+  }
+
   auth.onAuthStateChanged(async (user) => {
     if (user) {
       signedOutView.style.display = 'none';
       signedInView.style.display = 'block';
       memberGreeting.textContent = 'Welcome, ' + (user.displayName || 'Member');
 
-      const memberRef = db.collection('members').doc(user.uid);
+      const memberRef = db.collection('members').doc(user.email);
       const snap = await memberRef.get();
       let tier = 'free';
 
@@ -938,6 +1056,16 @@
       memberTierBadge.textContent = isPaid ? tier + ' Member' : 'Free Member';
       freeTierBlock.style.display = isPaid ? 'none' : 'block';
       paidTierBlock.style.display = isPaid ? 'block' : 'none';
+
+      memberLeaderboard.style.display = 'block';
+      loadPublicLeaderboard();
+
+      if (user.email === ADMIN_EMAIL) {
+        adminPanel.style.display = 'block';
+        loadAllMembersForAdmin();
+      } else {
+        adminPanel.style.display = 'none';
+      }
     } else {
       signedOutView.style.display = 'block';
       signedInView.style.display = 'none';
