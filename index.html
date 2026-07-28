@@ -458,6 +458,48 @@
     margin-right:8px; vertical-align:middle; flex-shrink:0;
   }
 
+  /* ===== Voucher Modal ===== */
+  #voucherOverlay{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(0,0,0,0.55);
+    display:none; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  #voucherOverlay.open{display:flex;}
+  .voucher-card{
+    width:100%; max-width:380px;
+    background:var(--ivory); color:var(--ink);
+    border:2px solid var(--brass);
+    padding:36px 30px; text-align:center; position:relative;
+  }
+  .voucher-card::before{
+    content:""; position:absolute; inset:8px;
+    border:1px solid var(--brass); pointer-events:none;
+  }
+  .voucher-seal{width:52px; height:52px; margin:0 auto 16px;}
+  .voucher-card .v-label{
+    font-family:'Jost', sans-serif; font-size:0.68rem;
+    letter-spacing:0.2em; text-transform:uppercase; color:var(--brass-bright);
+    margin-bottom:8px;
+  }
+  .voucher-card h3{
+    font-family:'Cormorant Garamond', serif; font-size:1.7rem;
+    color:var(--burgundy); margin-bottom:4px;
+  }
+  .voucher-card .v-event{font-family:'Cormorant Garamond', serif; font-style:italic; font-size:1.15rem; margin:14px 0 4px;}
+  .voucher-card .v-date{font-family:'Jost', sans-serif; font-size:0.78rem; color:#6b6455; margin-bottom:18px;}
+  .voucher-card .v-tier{
+    display:inline-block; font-family:'Jost', sans-serif; font-size:0.7rem;
+    letter-spacing:0.1em; text-transform:uppercase;
+    background:var(--brass); color:var(--forest); padding:5px 16px; margin-bottom:22px;
+  }
+  .voucher-close{
+    display:block; margin:0 auto; background:var(--forest); color:var(--ivory);
+    border:none; padding:12px 30px; font-family:'Jost', sans-serif;
+    font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;
+  }
+  .voucher-close:hover{background:var(--forest-2);}
+
   /* ===== Contact ===== */
   .contact{background:var(--forest-2); color:var(--ivory);}
   .contact-wrap{
@@ -651,17 +693,17 @@
     <div class="event-row">
       <div class="event-date">SEP<span class="day">12</span></div>
       <div class="event-info"><h3>Autumn General Assembly</h3><span>7:00 PM &middot; The Main Hall</span></div>
-      <a href="#contact" class="btn btn-ghost">Reserve</a>
+      <button class="btn btn-ghost reserve-btn" data-event="Autumn General Assembly" data-date="Sep 12, 7:00 PM &middot; The Main Hall">Reserve</button>
     </div>
     <div class="event-row">
       <div class="event-date">OCT<span class="day">04</span></div>
       <div class="event-info"><h3>New Members' Reception</h3><span>6:30 PM &middot; The Parlour</span></div>
-      <a href="#contact" class="btn btn-ghost">Reserve</a>
+      <button class="btn btn-ghost reserve-btn" data-event="New Members' Reception" data-date="Oct 4, 6:30 PM &middot; The Parlour">Reserve</button>
     </div>
     <div class="event-row">
       <div class="event-date">NOV<span class="day">21</span></div>
       <div class="event-info"><h3>Founders' Dinner</h3><span>8:00 PM &middot; The Great Room</span></div>
-      <a href="#contact" class="btn btn-ghost">Reserve</a>
+      <button class="btn btn-ghost reserve-btn" data-event="Founders' Dinner" data-date="Nov 21, 8:00 PM &middot; The Great Room">Reserve</button>
     </div>
   </div>
 </section>
@@ -867,6 +909,18 @@
   Elite Club &nbsp;&middot;&nbsp; Founded in Fellowship &nbsp;&middot;&nbsp; &copy; 2026
 </footer>
 
+<div id="voucherOverlay">
+  <div class="voucher-card">
+    <svg class="voucher-seal" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="47" stroke="#B08D4F" stroke-width="2"/><circle cx="50" cy="50" r="38" stroke="#B08D4F" stroke-width="1"/><text x="50" y="60" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" fill="#5E2431">EC</text></svg>
+    <div class="v-label">Reservation Confirmed</div>
+    <h3 id="voucherName">Member Name</h3>
+    <div class="v-event" id="voucherEvent">Event Name</div>
+    <div class="v-date" id="voucherDate">Date &middot; Location</div>
+    <div class="v-tier" id="voucherTier">VIP Premier Member</div>
+    <button class="voucher-close" id="voucherCloseBtn">Close</button>
+  </div>
+</div>
+
 <button id="ecChatToggle" aria-label="Open concierge chat">EC</button>
 <div id="ecChatPanel">
   <div id="ecChatHead">
@@ -1064,6 +1118,9 @@
     }
   }
 
+  let currentUserName = null;
+  let currentUserTier = 'Free';
+
   auth.onAuthStateChanged(async (user) => {
     if (user) {
       signedOutView.style.display = 'none';
@@ -1085,6 +1142,9 @@
         tier = normalizeTier(snap.data().tier);
       }
 
+      currentUserName = user.displayName || 'Member';
+      currentUserTier = tier;
+
       const isPaid = tier !== 'Free';
       memberTierBadge.textContent = isPaid ? tier + ' Member' : 'Free Member';
       freeTierBlock.style.display = isPaid ? 'none' : 'block';
@@ -1102,7 +1162,53 @@
     } else {
       signedOutView.style.display = 'block';
       signedInView.style.display = 'none';
+      currentUserName = null;
+      currentUserTier = 'Free';
     }
+  });
+
+  const voucherOverlay = document.getElementById('voucherOverlay');
+  const voucherName = document.getElementById('voucherName');
+  const voucherEvent = document.getElementById('voucherEvent');
+  const voucherDate = document.getElementById('voucherDate');
+  const voucherTier = document.getElementById('voucherTier');
+  document.getElementById('voucherCloseBtn').addEventListener('click', () => {
+    voucherOverlay.classList.remove('open');
+  });
+
+  document.querySelectorAll('.reserve-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!currentUserName) {
+        alert('Please sign in under Explore to reserve an event.');
+        document.getElementById('members').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      if (currentUserTier === 'Free') {
+        alert('Event reservations are reserved for paid members. Choose a tier under Membership to unlock this.');
+        document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      const eventName = btn.getAttribute('data-event');
+      const eventDate = btn.getAttribute('data-date');
+
+      voucherName.textContent = currentUserName;
+      voucherEvent.textContent = eventName;
+      voucherDate.innerHTML = eventDate;
+      voucherTier.textContent = 'VIP ' + currentUserTier + ' Member';
+      voucherOverlay.classList.add('open');
+
+      try {
+        await db.collection('reservations').add({
+          name: currentUserName,
+          tier: currentUserTier,
+          event: eventName,
+          reservedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (err) {
+        console.error('Could not save reservation', err);
+      }
+    });
   });
 </script>
 
