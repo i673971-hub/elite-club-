@@ -417,7 +417,7 @@
     gap:12px; padding:12px 0; border-top:1px solid var(--line);
   }
   .admin-row:first-of-type{border-top:none;}
-  .admin-row .m-name{font-size:0.92rem;}
+  .admin-row .m-name{font-size:0.92rem; display:flex; align-items:center;}
   .admin-row .m-email{
     display:block; font-family:'Jost', sans-serif; font-size:0.7rem;
     color:#8a8272; margin-top:2px;
@@ -441,7 +441,21 @@
   .tier-group.free-group .tier-group-label{color:#8a8272;}
   .lb-member-row{
     padding:8px 0; font-size:0.9rem;
-    display:flex; align-items:center; justify-content:space-between;
+    display:flex; align-items:center;
+  }
+  .lb-name-text{flex:1;}
+  .lb-tier-chip{
+    font-family:'Jost', sans-serif; font-size:0.6rem;
+    letter-spacing:0.08em; text-transform:uppercase;
+    padding:3px 9px; margin-left:10px; flex-shrink:0;
+    border:1px solid var(--brass);
+  }
+  .lb-tier-chip.paid{background:var(--brass); color:var(--forest); border-color:var(--brass);}
+  .lb-tier-chip.free{background:transparent; color:#8a8272; border-color:var(--line);}
+
+  .lb-icon{
+    display:inline-flex; width:20px; height:20px;
+    margin-right:8px; vertical-align:middle; flex-shrink:0;
   }
 
   /* ===== Contact ===== */
@@ -970,6 +984,13 @@
     return 'Free';
   }
 
+  function badgeIconSvg(tier) {
+    if (tier === 'Free') {
+      return '<svg class="lb-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#8a8272" stroke-width="1.4"/></svg>';
+    }
+    return '<svg class="lb-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#B08D4F"/><circle cx="12" cy="12" r="10" stroke="#8a6f3c" stroke-width="1"/><path d="M12 6.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6L12 14.7l-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#F4EFE4"/></svg>';
+  }
+
   const memberLeaderboard = document.getElementById('memberLeaderboard');
   const memberLeaderboardList = document.getElementById('memberLeaderboardList');
   const TIER_ORDER = ['Founding Member', 'Premier', 'Executive', 'Free'];
@@ -994,7 +1015,10 @@
         const groupClass = tier === 'Free' ? 'tier-group free-group' : 'tier-group';
         html += '<div class="' + groupClass + '"><div class="tier-group-label">' + tier + '</div>';
         groups[tier].forEach(name => {
-          html += '<div class="lb-member-row">' + name + '</div>';
+          const chipClass = tier === 'Free' ? 'free' : 'paid';
+          html += '<div class="lb-member-row">' + badgeIconSvg(tier) +
+            '<span class="lb-name-text">' + name + '</span>' +
+            '<span class="lb-tier-chip ' + chipClass + '">' + tier + '</span></div>';
         });
         html += '</div>';
       });
@@ -1029,7 +1053,7 @@
       snapshot.forEach(doc => {
         const d = doc.data();
         html += '<div class="admin-row"><div class="m-name">' +
-          (d.name || 'Unnamed') +
+          badgeIconSvg(normalizeTier(d.tier)) + (d.name || 'Unnamed') +
           '<span class="m-email">' + (d.email || '') + '</span></div>' +
           badgeHtml(d.tier || 'free') + '</div>';
       });
