@@ -58,6 +58,17 @@
     0%{transform:translate3d(0,0,0) scale(1);}
     100%{transform:translate3d(-3%,2%,0) scale(1.08);}
   }
+  .reveal{
+    opacity:0;
+    transform:perspective(1400px) rotateX(-14deg) translateY(50px);
+    transform-origin:top center;
+    transition:opacity 1s cubic-bezier(.2,.8,.2,1), transform 1s cubic-bezier(.2,.8,.2,1);
+    will-change:transform, opacity;
+  }
+  .reveal.in-view{
+    opacity:1;
+    transform:perspective(1400px) rotateX(0deg) translateY(0);
+  }
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
   }
@@ -208,17 +219,23 @@
   /* ===== About ===== */
   .about-grid{
     max-width:1000px; margin:0 auto;
-    display:grid; grid-template-columns:1fr 1fr; gap:24px;
-    align-items:start;
+    display:grid; grid-template-columns:1fr 1fr;
+    align-items:stretch;
+    background:var(--glass-fill);
+    backdrop-filter:blur(28px) saturate(160%);
+    -webkit-backdrop-filter:blur(28px) saturate(160%);
+    border:1px solid var(--line);
+    border-radius:calc(var(--radius) + 6px);
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.25);
   }
   .about-grid .pillar{
-    padding:28px 26px;
-    background:var(--glass-fill);
-    backdrop-filter:blur(20px) saturate(160%);
-    -webkit-backdrop-filter:blur(20px) saturate(160%);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
+    padding:32px 30px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
   }
+  .about-grid .pillar:nth-child(2n){border-right:none;}
+  .about-grid .pillar:nth-last-child(-n+2){border-bottom:none;}
   .about-grid h3{
     font-size:1.2rem; margin-bottom:12px; color:var(--burgundy);
     font-family:'Cormorant Garamond', serif; font-weight:600;
@@ -231,23 +248,33 @@
     color:var(--brass-bright);
     padding-top:36px; border-top:1px solid var(--line);
   }
-  @media (max-width:720px){ .about-grid{grid-template-columns:1fr; gap:18px;} }
+  @media (max-width:720px){
+    .about-grid{grid-template-columns:1fr;}
+    .about-grid .pillar{border-right:none;}
+    .about-grid .pillar:nth-last-child(1){border-bottom:none;}
+  }
 
   /* ===== Events ===== */
   .events .section-head p{color:var(--ink-muted);}
-  .event-list{max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:14px;}
+  .event-list{
+    max-width:760px; margin:0 auto;
+    background:var(--glass-fill);
+    backdrop-filter:blur(28px) saturate(160%);
+    -webkit-backdrop-filter:blur(28px) saturate(160%);
+    border:1px solid var(--line);
+    border-radius:calc(var(--radius) + 6px);
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.25);
+  }
   .event-row{
     display:grid; grid-template-columns:110px 1fr auto;
     gap:28px; align-items:center;
-    padding:22px 26px;
-    background:var(--glass-fill);
-    backdrop-filter:blur(20px) saturate(160%);
-    -webkit-backdrop-filter:blur(20px) saturate(160%);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    transition:background 0.25s ease, transform 0.25s ease;
+    padding:26px 30px;
+    border-bottom:1px solid var(--line);
+    transition:background 0.25s ease;
   }
-  .event-row:hover{background:var(--glass-fill-strong); transform:translateY(-2px);}
+  .event-row:last-child{border-bottom:none;}
+  .event-row:hover{background:var(--glass-fill-strong);}
   .event-date{
     font-family:'Jost', sans-serif;
     font-size:0.76rem; letter-spacing:0.08em; text-transform:uppercase;
@@ -1291,6 +1318,19 @@
       }
     });
   });
+</script>
+
+<script>
+  document.querySelectorAll('section').forEach(s => s.classList.add('reveal'));
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 </script>
 
 </body>
