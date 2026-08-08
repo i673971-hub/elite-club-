@@ -575,14 +575,14 @@
   }
 
   /* ===== Voucher Modal ===== */
-  #voucherOverlay{
+  #voucherOverlay, #claimOverlay{
     position:fixed; inset:0; z-index:200;
     background:rgba(5,2,2,0.6);
     backdrop-filter:blur(6px);
     display:none; align-items:center; justify-content:center;
     padding:24px;
   }
-  #voucherOverlay.open{display:flex;}
+  #voucherOverlay.open, #claimOverlay.open{display:flex;}
   .voucher-card{
     width:100%; max-width:380px;
     background:var(--glass-fill-strong); color:var(--ivory);
@@ -816,22 +816,8 @@
     <span class="eyebrow">The Calendar</span>
     <h2>Upcoming Assemblies</h2>
   </div>
-  <div class="event-list">
-    <div class="event-row">
-      <div class="event-date">SEP<span class="day">12</span></div>
-      <div class="event-info"><h3>Autumn General Assembly</h3><span>7:00 PM &middot; The Main Hall</span></div>
-      <button class="btn btn-ghost reserve-btn" data-event="Autumn General Assembly" data-date="Sep 12, 7:00 PM &middot; The Main Hall">Reserve</button>
-    </div>
-    <div class="event-row">
-      <div class="event-date">OCT<span class="day">04</span></div>
-      <div class="event-info"><h3>New Members' Reception</h3><span>6:30 PM &middot; The Parlour</span></div>
-      <button class="btn btn-ghost reserve-btn" data-event="New Members' Reception" data-date="Oct 4, 6:30 PM &middot; The Parlour">Reserve</button>
-    </div>
-    <div class="event-row">
-      <div class="event-date">NOV<span class="day">21</span></div>
-      <div class="event-info"><h3>Founders' Dinner</h3><span>8:00 PM &middot; The Great Room</span></div>
-      <button class="btn btn-ghost reserve-btn" data-event="Founders' Dinner" data-date="Nov 21, 8:00 PM &middot; The Great Room">Reserve</button>
-    </div>
+  <div class="event-list" id="eventListContainer">
+    <div class="event-row"><div class="event-info"><span>Loading events…</span></div></div>
   </div>
 </section>
 
@@ -879,9 +865,40 @@
         </div>
         <button class="signout-link" id="signOutBtn">Sign out</button>
       </div>
+      <div class="admin-panel" id="myTicketsPanel" style="display:none;">
+        <h4>My Tickets</h4>
+        <div id="myTicketsList">No tickets yet — reserve a spot on the Calendar above.</div>
+      </div>
       <div class="admin-panel" id="memberLeaderboard" style="display:none;">
         <h4>Member Leaderboard</h4>
         <div id="memberLeaderboardList">Loading members…</div>
+      </div>
+      <div class="admin-panel" id="adminEventPanel" style="display:none;">
+        <h4>Create Event</h4>
+        <form id="createEventForm">
+          <div class="field">
+            <label for="evTitle">Event Title</label>
+            <input id="evTitle" type="text" required>
+          </div>
+          <div class="field">
+            <label for="evDate">Date</label>
+            <input id="evDate" type="date" required>
+          </div>
+          <div class="field">
+            <label for="evTime">Time</label>
+            <input id="evTime" type="time" required>
+          </div>
+          <div class="field">
+            <label for="evLocation">Location</label>
+            <input id="evLocation" type="text" placeholder="e.g. The Main Hall" required>
+          </div>
+          <button type="submit" class="btn btn-solid" style="width:100%; cursor:pointer;">Add Event</button>
+        </form>
+        <p class="form-note" id="createEventMsg" style="display:none;">Event added to the Calendar.</p>
+      </div>
+      <div class="admin-panel" id="pendingPaymentsPanel" style="display:none;">
+        <h4>Pending Payments</h4>
+        <div id="pendingPaymentsList">Loading…</div>
       </div>
       <div class="admin-panel" id="adminPanel" style="display:none;">
         <h4>All Registered Members</h4>
@@ -907,6 +924,7 @@
         <li>Quarterly newsletter</li>
       </ul>
       <a class="btn btn-solid" href="upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=999&cu=INR&tn=Executive%20Membership">Pay via UPI</a>
+      <button class="btn btn-ghost claim-btn" data-tier="Executive" data-amount="999" style="margin-top:10px; cursor:pointer;">I've Paid</button>
     </div>
     <div class="price-card featured">
       <div class="tier-name">Premier</div>
@@ -919,6 +937,7 @@
         <li>Founders' Dinner invitation</li>
       </ul>
       <a class="btn btn-solid" href="upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=2999&cu=INR&tn=Premier%20Membership">Pay via UPI</a>
+      <button class="btn btn-ghost claim-btn" data-tier="Premier" data-amount="2999" style="margin-top:10px; cursor:pointer;">I've Paid</button>
     </div>
     <div class="price-card">
       <div class="tier-name">Founding Member</div>
@@ -931,9 +950,10 @@
         <li>Voting rights on Club matters</li>
       </ul>
       <a class="btn btn-solid" href="upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=4999&cu=INR&tn=Founding%20Member%20Membership">Pay via UPI</a>
+      <button class="btn btn-ghost claim-btn" data-tier="Founding Member" data-amount="4999" style="margin-top:10px; cursor:pointer;">I've Paid</button>
     </div>
   </div>
-  <p class="upi-note">Tap "Pay via UPI" on your phone to open GPay, PhonePe, Paytm, or your preferred UPI app with the amount pre-filled.</p>
+  <p class="upi-note">Tap "Pay via UPI" to open GPay, PhonePe, Paytm, or your preferred UPI app with the amount pre-filled. After paying, tap "I've Paid" and enter your transaction reference (UTR) so we can confirm it.</p>
 </section>
 
 <section class="donate" id="donate">
@@ -1044,9 +1064,29 @@
     <div class="v-event" id="voucherEvent">Event Name</div>
     <div class="v-date" id="voucherDate">Date &middot; Location</div>
     <div class="v-tier" id="voucherTier">VIP Premier Member</div>
+    <div class="v-date" id="voucherTicketId">Ticket #</div>
     <button class="voucher-close" id="voucherCloseBtn">Close</button>
   </div>
 </div>
+
+<div id="claimOverlay">
+  <div class="voucher-card">
+    <svg class="voucher-seal" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="47" stroke="#B08D4F" stroke-width="2"/><circle cx="50" cy="50" r="38" stroke="#B08D4F" stroke-width="1"/><text x="50" y="60" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" fill="#5E2431">EC</text></svg>
+    <div class="v-label">Confirm Your Payment</div>
+    <h3 id="claimTierHeading">Executive Membership</h3>
+    <div class="v-date" style="margin-bottom:22px;" id="claimAmountLabel">&#8377;999</div>
+    <form id="claimForm" style="text-align:left;">
+      <div class="field">
+        <label for="claimUtr">UPI Transaction Ref. (UTR)</label>
+        <input id="claimUtr" type="text" placeholder="12-digit reference number" required>
+      </div>
+      <button type="submit" class="btn btn-solid" style="width:100%; cursor:pointer; margin-bottom:12px;">Submit for Confirmation</button>
+    </form>
+    <p class="form-note" id="claimMsg" style="display:none; margin-bottom:12px;">Submitted — we'll confirm shortly.</p>
+    <button class="voucher-close" id="claimCloseBtn">Close</button>
+  </div>
+</div>
+
 
 <button id="ecChatToggle" aria-label="Open concierge chat">EC</button>
 <div id="ecChatPanel">
@@ -1157,6 +1197,88 @@
 
   signOutBtn.addEventListener('click', () => auth.signOut());
 
+  /* ===== Events: load, seed, render ===== */
+  const eventListContainer = document.getElementById('eventListContainer');
+  const MONTH_ABBR = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+  function formatEventDateLabel(sortDate, time, location) {
+    const d = new Date(sortDate + 'T00:00:00');
+    const monthName = d.toLocaleString('en-US', { month: 'short' });
+    const day = d.getDate();
+    const timeLabel = new Date(sortDate + 'T' + time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    return { display: monthName + ' ' + day + ', ' + timeLabel + ' &middot; ' + location, timeLabel };
+  }
+
+  async function seedDefaultEventsIfEmpty() {
+    const snap = await db.collection('events').limit(1).get();
+    if (!snap.empty) return;
+    const defaults = [
+      { title: 'Autumn General Assembly', sortDate: '2026-09-12', time: '19:00', location: 'The Main Hall' },
+      { title: "New Members' Reception", sortDate: '2026-10-04', time: '18:30', location: 'The Parlour' },
+      { title: "Founders' Dinner", sortDate: '2026-11-21', time: '20:00', location: 'The Great Room' }
+    ];
+    const batch = db.batch();
+    defaults.forEach(ev => {
+      const ref = db.collection('events').doc();
+      batch.set(ref, Object.assign({}, ev, { createdAt: firebase.firestore.FieldValue.serverTimestamp() }));
+    });
+    await batch.commit();
+  }
+
+  async function renderEvents() {
+    try {
+      await seedDefaultEventsIfEmpty();
+      const snapshot = await db.collection('events').orderBy('sortDate', 'asc').get();
+      if (snapshot.empty) {
+        eventListContainer.innerHTML = '<div class="event-row"><div class="event-info"><span>No upcoming events yet.</span></div></div>';
+        return;
+      }
+      let html = '';
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        const dt = new Date(d.sortDate + 'T00:00:00');
+        const month = MONTH_ABBR[dt.getMonth()];
+        const day = String(dt.getDate()).padStart(2, '0');
+        const { display } = formatEventDateLabel(d.sortDate, d.time || '00:00', d.location || '');
+        html += '<div class="event-row">' +
+          '<div class="event-date">' + month + '<span class="day">' + day + '</span></div>' +
+          '<div class="event-info"><h3>' + (d.title || 'Untitled Event') + '</h3><span>' + display + '</span></div>' +
+          '<button class="btn btn-ghost reserve-btn" data-event-id="' + doc.id + '" data-event="' + (d.title || '').replace(/"/g, '&quot;') + '" data-date="' + display + '">Reserve</button>' +
+          '</div>';
+      });
+      eventListContainer.innerHTML = html;
+    } catch (err) {
+      console.error('Could not load events', err);
+      eventListContainer.innerHTML = '<div class="event-row"><div class="event-info"><span>Could not load events.</span></div></div>';
+    }
+  }
+  renderEvents();
+
+  const createEventForm = document.getElementById('createEventForm');
+  const createEventMsg = document.getElementById('createEventMsg');
+  createEventForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = document.getElementById('evTitle').value.trim();
+    const sortDate = document.getElementById('evDate').value;
+    const time = document.getElementById('evTime').value;
+    const location = document.getElementById('evLocation').value.trim();
+    if (!title || !sortDate || !time || !location) return;
+    try {
+      await db.collection('events').add({
+        title, sortDate, time, location,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdBy: auth.currentUser ? auth.currentUser.email : null
+      });
+      createEventForm.reset();
+      createEventMsg.style.display = 'block';
+      setTimeout(() => { createEventMsg.style.display = 'none'; }, 2500);
+      renderEvents();
+    } catch (err) {
+      console.error('Could not create event', err);
+      alert('Could not create the event. Please try again.');
+    }
+  });
+
   function normalizeTier(raw) {
     const clean = (raw || '').toString().trim().toLowerCase();
     if (clean === 'executive') return 'Executive';
@@ -1245,8 +1367,156 @@
     }
   }
 
+  /* ===== Pending payment claims (admin) ===== */
+  const pendingPaymentsPanel = document.getElementById('pendingPaymentsPanel');
+  const pendingPaymentsList = document.getElementById('pendingPaymentsList');
+
+  async function loadPendingPayments() {
+    pendingPaymentsList.textContent = 'Loading…';
+    try {
+      const snapshot = await db.collection('paymentClaims').where('status', '==', 'pending').get();
+      if (snapshot.empty) {
+        pendingPaymentsList.textContent = 'No pending payments.';
+        return;
+      }
+      let html = '';
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        html += '<div class="admin-row" data-claim-id="' + doc.id + '">' +
+          '<div class="m-name">' + (d.memberName || d.memberEmail || 'Member') +
+          '<span class="m-email">' + (d.tier || '') + ' &middot; &#8377;' + (d.amount || '') + ' &middot; UTR: ' + (d.utr || '') + '</span></div>' +
+          '<div style="display:flex; gap:8px;">' +
+          '<button class="btn btn-solid claim-approve-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-claim-id="' + doc.id + '" data-email="' + (d.memberEmail || '') + '" data-tier="' + (d.tier || '') + '">Approve</button>' +
+          '<button class="btn btn-ghost claim-reject-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-claim-id="' + doc.id + '">Reject</button>' +
+          '</div></div>';
+      });
+      pendingPaymentsList.innerHTML = html;
+    } catch (err) {
+      pendingPaymentsList.textContent = 'Could not load pending payments.';
+      console.error(err);
+    }
+  }
+
+  pendingPaymentsList.addEventListener('click', async (e) => {
+    const approveBtn = e.target.closest('.claim-approve-btn');
+    const rejectBtn = e.target.closest('.claim-reject-btn');
+    if (approveBtn) {
+      approveBtn.disabled = true;
+      const claimId = approveBtn.getAttribute('data-claim-id');
+      const email = approveBtn.getAttribute('data-email');
+      const tier = approveBtn.getAttribute('data-tier');
+      try {
+        await db.collection('members').doc(email).set({ tier }, { merge: true });
+        await db.collection('paymentClaims').doc(claimId).update({
+          status: 'approved',
+          approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        loadPendingPayments();
+        loadAllMembersForAdmin();
+      } catch (err) {
+        console.error('Could not approve payment', err);
+        alert('Could not approve this payment. Please try again.');
+        approveBtn.disabled = false;
+      }
+    } else if (rejectBtn) {
+      rejectBtn.disabled = true;
+      const claimId = rejectBtn.getAttribute('data-claim-id');
+      try {
+        await db.collection('paymentClaims').doc(claimId).update({ status: 'rejected' });
+        loadPendingPayments();
+      } catch (err) {
+        console.error('Could not reject payment', err);
+        rejectBtn.disabled = false;
+      }
+    }
+  });
+
+  /* ===== "I've Paid" claim modal (members) ===== */
+  const claimOverlay = document.getElementById('claimOverlay');
+  const claimTierHeading = document.getElementById('claimTierHeading');
+  const claimAmountLabel = document.getElementById('claimAmountLabel');
+  const claimForm = document.getElementById('claimForm');
+  const claimMsg = document.getElementById('claimMsg');
+  let pendingClaimTier = null;
+  let pendingClaimAmount = null;
+
+  document.querySelectorAll('.claim-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!currentUserEmail) {
+        alert('Please sign in under Explore first, then come back and tap "I\'ve Paid".');
+        document.getElementById('members').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      pendingClaimTier = btn.getAttribute('data-tier');
+      pendingClaimAmount = btn.getAttribute('data-amount');
+      claimTierHeading.textContent = pendingClaimTier + ' Membership';
+      claimAmountLabel.innerHTML = '&#8377;' + pendingClaimAmount;
+      claimMsg.style.display = 'none';
+      claimForm.style.display = 'block';
+      document.getElementById('claimUtr').value = '';
+      claimOverlay.classList.add('open');
+    });
+  });
+
+  document.getElementById('claimCloseBtn').addEventListener('click', () => {
+    claimOverlay.classList.remove('open');
+  });
+
+  claimForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const utr = document.getElementById('claimUtr').value.trim();
+    if (!utr || !currentUserEmail) return;
+    const submitBtn = claimForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try {
+      await db.collection('paymentClaims').add({
+        memberEmail: currentUserEmail,
+        memberName: currentUserName,
+        tier: pendingClaimTier,
+        amount: pendingClaimAmount,
+        utr,
+        status: 'pending',
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      claimForm.style.display = 'none';
+      claimMsg.style.display = 'block';
+    } catch (err) {
+      console.error('Could not submit payment claim', err);
+      alert('Could not submit — please try again.');
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  const adminEventPanel = document.getElementById('adminEventPanel');
+  const myTicketsPanel = document.getElementById('myTicketsPanel');
+  const myTicketsList = document.getElementById('myTicketsList');
+
   let currentUserName = null;
   let currentUserTier = 'Free';
+  let currentUserEmail = null;
+
+  async function loadMyTickets() {
+    if (!currentUserEmail) return;
+    myTicketsList.textContent = 'Loading tickets…';
+    try {
+      const snapshot = await db.collection('tickets').where('memberEmail', '==', currentUserEmail).get();
+      if (snapshot.empty) {
+        myTicketsList.textContent = 'No tickets yet — reserve a spot on the Calendar above.';
+        return;
+      }
+      let html = '';
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        html += '<div class="admin-row"><div class="m-name">' + (d.eventTitle || 'Event') +
+          '<span class="m-email">' + (d.eventDateLabel || '') + ' &middot; Ticket #' + doc.id.slice(0, 8).toUpperCase() + '</span></div></div>';
+      });
+      myTicketsList.innerHTML = html;
+    } catch (err) {
+      myTicketsList.textContent = 'Could not load your tickets.';
+      console.error(err);
+    }
+  }
 
   auth.onAuthStateChanged(async (user) => {
     if (user) {
@@ -1282,15 +1552,25 @@
 
       if (user.email === ADMIN_EMAIL) {
         adminPanel.style.display = 'block';
+        adminEventPanel.style.display = 'block';
+        pendingPaymentsPanel.style.display = 'block';
         loadAllMembersForAdmin();
+        loadPendingPayments();
       } else {
         adminPanel.style.display = 'none';
+        adminEventPanel.style.display = 'none';
+        pendingPaymentsPanel.style.display = 'none';
       }
+
+      currentUserEmail = user.email || null;
+      myTicketsPanel.style.display = 'block';
+      loadMyTickets();
     } else {
       signedOutView.style.display = 'block';
       signedInView.style.display = 'none';
       currentUserName = null;
       currentUserTier = 'Free';
+      currentUserEmail = null;
     }
   });
 
@@ -1299,43 +1579,61 @@
   const voucherEvent = document.getElementById('voucherEvent');
   const voucherDate = document.getElementById('voucherDate');
   const voucherTier = document.getElementById('voucherTier');
+  const voucherTicketId = document.getElementById('voucherTicketId');
   document.getElementById('voucherCloseBtn').addEventListener('click', () => {
     voucherOverlay.classList.remove('open');
   });
 
-  document.querySelectorAll('.reserve-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      if (!currentUserName) {
-        alert('Please sign in under Explore to reserve an event.');
-        document.getElementById('members').scrollIntoView({ behavior: 'smooth' });
-        return;
-      }
-      if (currentUserTier === 'Free') {
-        alert('Event reservations are reserved for paid members. Choose a tier under Membership to unlock this.');
-        document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
-        return;
-      }
+  // Event delegation: event rows (and their Reserve buttons) are rendered dynamically from Firestore
+  eventListContainer.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.reserve-btn');
+    if (!btn) return;
 
-      const eventName = btn.getAttribute('data-event');
-      const eventDate = btn.getAttribute('data-date');
+    if (!currentUserName) {
+      alert('Please sign in under Explore to reserve an event.');
+      document.getElementById('members').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    if (currentUserTier === 'Free') {
+      alert('Event reservations are reserved for paid members. Choose a tier under Membership to unlock this.');
+      document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    const eventId = btn.getAttribute('data-event-id');
+    const eventName = btn.getAttribute('data-event');
+    const eventDate = btn.getAttribute('data-date');
+
+    btn.disabled = true;
+    const originalLabel = btn.textContent;
+    btn.textContent = 'Booking…';
+
+    try {
+      const ticketRef = await db.collection('tickets').add({
+        eventId: eventId || null,
+        eventTitle: eventName,
+        eventDateLabel: eventDate,
+        memberName: currentUserName,
+        memberEmail: currentUserEmail,
+        tier: currentUserTier,
+        issuedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
       voucherName.textContent = currentUserName;
       voucherEvent.textContent = eventName;
       voucherDate.innerHTML = eventDate;
       voucherTier.textContent = 'VIP ' + currentUserTier + ' Member';
+      voucherTicketId.textContent = 'Ticket #' + ticketRef.id.slice(0, 8).toUpperCase();
       voucherOverlay.classList.add('open');
 
-      try {
-        await db.collection('reservations').add({
-          name: currentUserName,
-          tier: currentUserTier,
-          event: eventName,
-          reservedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch (err) {
-        console.error('Could not save reservation', err);
-      }
-    });
+      loadMyTickets();
+    } catch (err) {
+      console.error('Could not create ticket', err);
+      alert('Could not complete your reservation. Please try again.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
   });
 </script>
 
