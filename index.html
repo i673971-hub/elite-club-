@@ -923,8 +923,9 @@
         <li>Members' Hall listing</li>
         <li>Quarterly newsletter</li>
       </ul>
-      <a class="btn btn-solid" href="upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=999&cu=INR&tn=Executive%20Membership">Pay via UPI</a>
-      <button class="btn btn-ghost claim-btn" data-tier="Executive" data-amount="999" style="margin-top:10px; cursor:pointer;">I've Paid</button>
+      <a class="btn btn-solid pay-upi-btn" data-tier="Executive" data-amount="999" href="upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=999&cu=INR&tn=Executive%20Membership">Pay via UPI</a>
+      <button class="btn btn-ghost pay-crypto-btn" data-tier="Executive" data-amount="999" style="margin-top:10px; cursor:pointer;">Pay via Crypto</button>
+      <button class="btn btn-ghost claim-btn" data-tier="Executive" data-amount="999" style="margin-top:10px; cursor:pointer; display:none;">I've Paid</button>
     </div>
     <div class="price-card featured">
       <div class="tier-name">Premier</div>
@@ -936,8 +937,9 @@
         <li>Guest privileges (2 per year)</li>
         <li>Founders' Dinner invitation</li>
       </ul>
-      <a class="btn btn-solid" href="upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=2999&cu=INR&tn=Premier%20Membership">Pay via UPI</a>
-      <button class="btn btn-ghost claim-btn" data-tier="Premier" data-amount="2999" style="margin-top:10px; cursor:pointer;">I've Paid</button>
+      <a class="btn btn-solid pay-upi-btn" data-tier="Premier" data-amount="2999" href="upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=2999&cu=INR&tn=Premier%20Membership">Pay via UPI</a>
+      <button class="btn btn-ghost pay-crypto-btn" data-tier="Premier" data-amount="2999" style="margin-top:10px; cursor:pointer;">Pay via Crypto</button>
+      <button class="btn btn-ghost claim-btn" data-tier="Premier" data-amount="2999" style="margin-top:10px; cursor:pointer; display:none;">I've Paid</button>
     </div>
     <div class="price-card">
       <div class="tier-name">Founding Member</div>
@@ -949,11 +951,12 @@
         <li>Unlimited guest privileges</li>
         <li>Voting rights on Club matters</li>
       </ul>
-      <a class="btn btn-solid" href="upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=4999&cu=INR&tn=Founding%20Member%20Membership">Pay via UPI</a>
-      <button class="btn btn-ghost claim-btn" data-tier="Founding Member" data-amount="4999" style="margin-top:10px; cursor:pointer;">I've Paid</button>
+      <a class="btn btn-solid pay-upi-btn" data-tier="Founding Member" data-amount="4999" href="upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=4999&cu=INR&tn=Founding%20Member%20Membership">Pay via UPI</a>
+      <button class="btn btn-ghost pay-crypto-btn" data-tier="Founding Member" data-amount="4999" style="margin-top:10px; cursor:pointer;">Pay via Crypto</button>
+      <button class="btn btn-ghost claim-btn" data-tier="Founding Member" data-amount="4999" style="margin-top:10px; cursor:pointer; display:none;">I've Paid</button>
     </div>
   </div>
-  <p class="upi-note">Tap "Pay via UPI" to open GPay, PhonePe, Paytm, or your preferred UPI app with the amount pre-filled. After paying, tap "I've Paid" and enter your transaction reference (UTR) so we can confirm it.</p>
+  <p class="upi-note">Choose "Pay via UPI" or "Pay via Crypto" to pay. Once you've sent payment, an "I've Paid" button will appear — tap it and enter your transaction reference so we can confirm it.</p>
 </section>
 
 <section class="donate" id="donate">
@@ -1077,13 +1080,28 @@
     <div class="v-date" style="margin-bottom:22px;" id="claimAmountLabel">&#8377;999</div>
     <form id="claimForm" style="text-align:left;">
       <div class="field">
-        <label for="claimUtr">UPI Transaction Ref. (UTR)</label>
+        <label for="claimUtr" id="claimUtrLabel">UPI Transaction Ref. (UTR)</label>
         <input id="claimUtr" type="text" placeholder="12-digit reference number" required>
       </div>
       <button type="submit" class="btn btn-solid" style="width:100%; cursor:pointer; margin-bottom:12px;">Submit for Confirmation</button>
     </form>
     <p class="form-note" id="claimMsg" style="display:none; margin-bottom:12px;">Submitted — we'll confirm shortly.</p>
     <button class="voucher-close" id="claimCloseBtn">Close</button>
+  </div>
+</div>
+
+<div id="cryptoOverlay">
+  <div class="voucher-card">
+    <svg class="voucher-seal" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="47" stroke="#B08D4F" stroke-width="2"/><circle cx="50" cy="50" r="38" stroke="#B08D4F" stroke-width="1"/><text x="50" y="60" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" fill="#5E2431">EC</text></svg>
+    <div class="v-label">Pay via Crypto</div>
+    <h3 id="cryptoTierHeading">Executive Membership</h3>
+    <div class="v-date" style="margin-bottom:18px;" id="cryptoAmountLabel">Approx. equivalent of &#8377;999</div>
+    <div class="wallet-box" style="margin-bottom:14px;">
+      <code id="cryptoWalletAddr">0xc0090FE0eD37892B24eBe02619cCC51da44A5A5c</code>
+      <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('cryptoWalletAddr').textContent).then(()=>{this.textContent='Copied';setTimeout(()=>this.textContent='Copy',1500);})">Copy</button>
+    </div>
+    <p class="wallet-note" style="margin-bottom:22px;">Ethereum network. Confirm the address before sending. Once sent, close this and tap "I've Paid" on the tier card to submit your transaction hash.</p>
+    <button class="voucher-close" id="cryptoCloseBtn">Close</button>
   </div>
 </div>
 
@@ -1384,7 +1402,7 @@
         const d = doc.data();
         html += '<div class="admin-row" data-claim-id="' + doc.id + '">' +
           '<div class="m-name">' + (d.memberName || d.memberEmail || 'Member') +
-          '<span class="m-email">' + (d.tier || '') + ' &middot; &#8377;' + (d.amount || '') + ' &middot; UTR: ' + (d.utr || '') + '</span></div>' +
+          '<span class="m-email">' + (d.tier || '') + ' &middot; &#8377;' + (d.amount || '') + ' &middot; ' + (d.method || 'UPI') + ' &middot; Ref: ' + (d.utr || '') + '</span></div>' +
           '<div style="display:flex; gap:8px;">' +
           '<button class="btn btn-solid claim-approve-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-claim-id="' + doc.id + '" data-email="' + (d.memberEmail || '') + '" data-tier="' + (d.tier || '') + '">Approve</button>' +
           '<button class="btn btn-ghost claim-reject-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-claim-id="' + doc.id + '">Reject</button>' +
@@ -1435,10 +1453,45 @@
   const claimOverlay = document.getElementById('claimOverlay');
   const claimTierHeading = document.getElementById('claimTierHeading');
   const claimAmountLabel = document.getElementById('claimAmountLabel');
+  const claimUtrLabel = document.getElementById('claimUtrLabel');
   const claimForm = document.getElementById('claimForm');
   const claimMsg = document.getElementById('claimMsg');
   let pendingClaimTier = null;
   let pendingClaimAmount = null;
+  let pendingClaimMethod = null;
+
+  function revealClaimBtn(tier) {
+    document.querySelectorAll('.claim-btn').forEach(btn => {
+      if (btn.getAttribute('data-tier') === tier) btn.style.display = 'block';
+    });
+  }
+
+  // "Pay via UPI" opens the UPI app as before, and reveals "I've Paid" for that tier
+  document.querySelectorAll('.pay-upi-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      pendingClaimMethod = 'UPI';
+      revealClaimBtn(btn.getAttribute('data-tier'));
+    });
+  });
+
+  // "Pay via Crypto" shows the wallet address, and reveals "I've Paid" for that tier
+  const cryptoOverlay = document.getElementById('cryptoOverlay');
+  const cryptoTierHeading = document.getElementById('cryptoTierHeading');
+  const cryptoAmountLabel = document.getElementById('cryptoAmountLabel');
+  document.querySelectorAll('.pay-crypto-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tier = btn.getAttribute('data-tier');
+      const amount = btn.getAttribute('data-amount');
+      pendingClaimMethod = 'Crypto';
+      cryptoTierHeading.textContent = tier + ' Membership';
+      cryptoAmountLabel.innerHTML = 'Approx. equivalent of &#8377;' + amount;
+      cryptoOverlay.classList.add('open');
+      revealClaimBtn(tier);
+    });
+  });
+  document.getElementById('cryptoCloseBtn').addEventListener('click', () => {
+    cryptoOverlay.classList.remove('open');
+  });
 
   document.querySelectorAll('.claim-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1451,6 +1504,7 @@
       pendingClaimAmount = btn.getAttribute('data-amount');
       claimTierHeading.textContent = pendingClaimTier + ' Membership';
       claimAmountLabel.innerHTML = '&#8377;' + pendingClaimAmount;
+      claimUtrLabel.textContent = 'Transaction Reference (UPI UTR or Crypto Tx Hash)';
       claimMsg.style.display = 'none';
       claimForm.style.display = 'block';
       document.getElementById('claimUtr').value = '';
@@ -1474,6 +1528,7 @@
         memberName: currentUserName,
         tier: pendingClaimTier,
         amount: pendingClaimAmount,
+        method: pendingClaimMethod,
         utr,
         status: 'pending',
         submittedAt: firebase.firestore.FieldValue.serverTimestamp()
