@@ -892,6 +892,10 @@
             <label for="evLocation">Location</label>
             <input id="evLocation" type="text" placeholder="e.g. The Main Hall" required>
           </div>
+          <div class="field">
+            <label for="evPrice">Price (&#8377; &mdash; leave blank or 0 for free)</label>
+            <input id="evPrice" type="number" min="0" step="1" placeholder="e.g. 500">
+          </div>
           <button type="submit" class="btn btn-solid" style="width:100%; cursor:pointer;">Add Event</button>
         </form>
         <p class="form-note" id="createEventMsg" style="display:none;">Event added to the Calendar.</p>
@@ -1105,6 +1109,32 @@
   </div>
 </div>
 
+<div id="eventPayOverlay">
+  <div class="voucher-card">
+    <svg class="voucher-seal" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="47" stroke="#B08D4F" stroke-width="2"/><circle cx="50" cy="50" r="38" stroke="#B08D4F" stroke-width="1"/><text x="50" y="60" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" fill="#5E2431">EC</text></svg>
+    <div class="v-label">Reserve &amp; Pay</div>
+    <h3 id="eventPayTitle">Event Title</h3>
+    <div class="v-date" id="eventPayAmount" style="margin-bottom:18px;">&#8377;500</div>
+    <div style="display:flex; gap:10px; margin-bottom:16px;">
+      <a id="eventPayUpiBtn" class="btn btn-solid" style="flex:1; text-align:center;" href="#">Pay via UPI</a>
+      <button id="eventPayCryptoBtn" class="btn btn-ghost" style="flex:1; cursor:pointer;" type="button">Pay via Crypto</button>
+    </div>
+    <div id="eventCryptoBox" class="wallet-box" style="display:none; margin-bottom:16px;">
+      <code id="eventCryptoAddr">0xc0090FE0eD37892B24eBe02619cCC51da44A5A5c</code>
+      <button class="copy-btn" type="button" onclick="navigator.clipboard.writeText(document.getElementById('eventCryptoAddr').textContent).then(()=>{this.textContent='Copied';setTimeout(()=>this.textContent='Copy',1500);})">Copy</button>
+    </div>
+    <form id="eventPayForm" style="text-align:left;">
+      <div class="field">
+        <label for="eventPayUtr">Transaction Reference (UTR or Crypto Tx Hash)</label>
+        <input id="eventPayUtr" type="text" placeholder="Enter after paying" required>
+      </div>
+      <button type="submit" class="btn btn-solid" style="width:100%; cursor:pointer; margin-bottom:12px;">Submit for Confirmation</button>
+    </form>
+    <p class="form-note" id="eventPayMsg" style="display:none; margin-bottom:12px;">Submitted — your ticket will be issued once confirmed.</p>
+    <button class="voucher-close" id="eventPayCloseBtn">Close</button>
+  </div>
+</div>
+
 
 <button id="ecChatToggle" aria-label="Open concierge chat">EC</button>
 <div id="ecChatPanel">
@@ -1231,9 +1261,9 @@
     const snap = await db.collection('events').limit(1).get();
     if (!snap.empty) return;
     const defaults = [
-      { title: 'Autumn General Assembly', sortDate: '2026-09-12', time: '19:00', location: 'The Main Hall' },
-      { title: "New Members' Reception", sortDate: '2026-10-04', time: '18:30', location: 'The Parlour' },
-      { title: "Founders' Dinner", sortDate: '2026-11-21', time: '20:00', location: 'The Great Room' }
+      { title: 'Autumn General Assembly', sortDate: '2026-09-12', time: '19:00', location: 'The Main Hall', price: 0 },
+      { title: "New Members' Reception", sortDate: '2026-10-04', time: '18:30', location: 'The Parlour', price: 0 },
+      { title: "Founders' Dinner", sortDate: '2026-11-21', time: '20:00', location: 'The Great Room', price: 0 }
     ];
     const batch = db.batch();
     defaults.forEach(ev => {
@@ -1258,10 +1288,13 @@
         const month = MONTH_ABBR[dt.getMonth()];
         const day = String(dt.getDate()).padStart(2, '0');
         const { display } = formatEventDateLabel(d.sortDate, d.time || '00:00', d.location || '');
+        const price = Number(d.price) || 0;
+        const priceLabel = price > 0 ? ' &middot; &#8377;' + price : ' &middot; Free';
+        const btnLabel = price > 0 ? 'Reserve — \u20B9' + price : 'Reserve';
         html += '<div class="event-row">' +
           '<div class="event-date">' + month + '<span class="day">' + day + '</span></div>' +
-          '<div class="event-info"><h3>' + (d.title || 'Untitled Event') + '</h3><span>' + display + '</span></div>' +
-          '<button class="btn btn-ghost reserve-btn" data-event-id="' + doc.id + '" data-event="' + (d.title || '').replace(/"/g, '&quot;') + '" data-date="' + display + '">Reserve</button>' +
+          '<div class="event-info"><h3>' + (d.title || 'Untitled Event') + '</h3><span>' + display + priceLabel + '</span></div>' +
+          '<button class="btn btn-ghost reserve-btn" data-event-id="' + doc.id + '" data-event="' + (d.title || '').replace(/"/g, '&quot;') + '" data-date="' + display + '" data-price="' + price + '">' + btnLabel + '</button>' +
           '</div>';
       });
       eventListContainer.innerHTML = html;
@@ -1280,10 +1313,11 @@
     const sortDate = document.getElementById('evDate').value;
     const time = document.getElementById('evTime').value;
     const location = document.getElementById('evLocation').value.trim();
+    const price = Number(document.getElementById('evPrice').value) || 0;
     if (!title || !sortDate || !time || !location) return;
     try {
       await db.collection('events').add({
-        title, sortDate, time, location,
+        title, sortDate, time, location, price,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         createdBy: auth.currentUser ? auth.currentUser.email : null
       });
@@ -1400,11 +1434,15 @@
       let html = '';
       snapshot.forEach(doc => {
         const d = doc.data();
+        const isEvent = d.type === 'event';
+        const label = isEvent ? ('Event: ' + (d.eventTitle || '')) : (d.tier || '');
         html += '<div class="admin-row" data-claim-id="' + doc.id + '">' +
           '<div class="m-name">' + (d.memberName || d.memberEmail || 'Member') +
-          '<span class="m-email">' + (d.tier || '') + ' &middot; &#8377;' + (d.amount || '') + ' &middot; ' + (d.method || 'UPI') + ' &middot; Ref: ' + (d.utr || '') + '</span></div>' +
+          '<span class="m-email">' + label + ' &middot; &#8377;' + (d.amount || '') + ' &middot; ' + (d.method || 'UPI') + ' &middot; Ref: ' + (d.utr || '') + '</span></div>' +
           '<div style="display:flex; gap:8px;">' +
-          '<button class="btn btn-solid claim-approve-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-claim-id="' + doc.id + '" data-email="' + (d.memberEmail || '') + '" data-tier="' + (d.tier || '') + '">Approve</button>' +
+          '<button class="btn btn-solid claim-approve-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" ' +
+            'data-claim-id="' + doc.id + '" data-type="' + (d.type || 'membership') + '" data-email="' + (d.memberEmail || '') + '" data-name="' + (d.memberName || '') + '" ' +
+            'data-tier="' + (d.tier || '') + '" data-event-id="' + (d.eventId || '') + '" data-event-title="' + (d.eventTitle || '').replace(/"/g, '&quot;') + '" data-event-date="' + (d.eventDateLabel || '') + '">Approve</button>' +
           '<button class="btn btn-ghost claim-reject-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-claim-id="' + doc.id + '">Reject</button>' +
           '</div></div>';
       });
@@ -1421,10 +1459,23 @@
     if (approveBtn) {
       approveBtn.disabled = true;
       const claimId = approveBtn.getAttribute('data-claim-id');
+      const type = approveBtn.getAttribute('data-type') || 'membership';
       const email = approveBtn.getAttribute('data-email');
-      const tier = approveBtn.getAttribute('data-tier');
       try {
-        await db.collection('members').doc(email).set({ tier }, { merge: true });
+        if (type === 'event') {
+          await db.collection('tickets').add({
+            eventId: approveBtn.getAttribute('data-event-id') || null,
+            eventTitle: approveBtn.getAttribute('data-event-title'),
+            eventDateLabel: approveBtn.getAttribute('data-event-date'),
+            memberName: approveBtn.getAttribute('data-name') || '',
+            memberEmail: email,
+            tier: 'Paid Event',
+            issuedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } else {
+          const tier = approveBtn.getAttribute('data-tier');
+          await db.collection('members').doc(email).set({ tier }, { merge: true });
+        }
         await db.collection('paymentClaims').doc(claimId).update({
           status: 'approved',
           approvedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1524,6 +1575,7 @@
     submitBtn.disabled = true;
     try {
       await db.collection('paymentClaims').add({
+        type: 'membership',
         memberEmail: currentUserEmail,
         memberName: currentUserName,
         tier: pendingClaimTier,
@@ -1640,6 +1692,17 @@
   });
 
   // Event delegation: event rows (and their Reserve buttons) are rendered dynamically from Firestore
+  let pendingEventId = null, pendingEventTitle = null, pendingEventDateLabel = null, pendingEventPrice = 0, pendingEventMethod = null;
+
+  const eventPayOverlay = document.getElementById('eventPayOverlay');
+  const eventPayTitle = document.getElementById('eventPayTitle');
+  const eventPayAmount = document.getElementById('eventPayAmount');
+  const eventPayUpiBtn = document.getElementById('eventPayUpiBtn');
+  const eventPayCryptoBtn = document.getElementById('eventPayCryptoBtn');
+  const eventCryptoBox = document.getElementById('eventCryptoBox');
+  const eventPayForm = document.getElementById('eventPayForm');
+  const eventPayMsg = document.getElementById('eventPayMsg');
+
   eventListContainer.addEventListener('click', async (e) => {
     const btn = e.target.closest('.reserve-btn');
     if (!btn) return;
@@ -1649,15 +1712,37 @@
       document.getElementById('members').scrollIntoView({ behavior: 'smooth' });
       return;
     }
-    if (currentUserTier === 'Free') {
-      alert('Event reservations are reserved for paid members. Choose a tier under Membership to unlock this.');
-      document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
-      return;
-    }
 
     const eventId = btn.getAttribute('data-event-id');
     const eventName = btn.getAttribute('data-event');
     const eventDate = btn.getAttribute('data-date');
+    const price = Number(btn.getAttribute('data-price')) || 0;
+
+    if (price > 0) {
+      // Priced event: open the Reserve & Pay modal instead of booking directly
+      pendingEventId = eventId;
+      pendingEventTitle = eventName;
+      pendingEventDateLabel = eventDate;
+      pendingEventPrice = price;
+      pendingEventMethod = null;
+
+      eventPayTitle.textContent = eventName;
+      eventPayAmount.innerHTML = '&#8377;' + price;
+      eventPayUpiBtn.href = 'upi://pay?pa=i673971@okhdfcbank&pn=Elite%20Club&am=' + price + '&cu=INR&tn=' + encodeURIComponent(eventName);
+      eventCryptoBox.style.display = 'none';
+      eventPayForm.style.display = 'block';
+      eventPayMsg.style.display = 'none';
+      document.getElementById('eventPayUtr').value = '';
+      eventPayOverlay.classList.add('open');
+      return;
+    }
+
+    // Free event: existing behavior — requires a paid membership tier, books immediately
+    if (currentUserTier === 'Free') {
+      alert('Free-event reservations are for paid members. Choose a tier under Membership, or look for a priced event you can book directly.');
+      document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
 
     btn.disabled = true;
     const originalLabel = btn.textContent;
@@ -1688,6 +1773,45 @@
     } finally {
       btn.disabled = false;
       btn.textContent = originalLabel;
+    }
+  });
+
+  eventPayUpiBtn.addEventListener('click', () => { pendingEventMethod = 'UPI'; });
+  eventPayCryptoBtn.addEventListener('click', () => {
+    pendingEventMethod = 'Crypto';
+    eventCryptoBox.style.display = 'block';
+  });
+  document.getElementById('eventPayCloseBtn').addEventListener('click', () => {
+    eventPayOverlay.classList.remove('open');
+  });
+
+  eventPayForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const utr = document.getElementById('eventPayUtr').value.trim();
+    if (!utr || !currentUserEmail) return;
+    const submitBtn = eventPayForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try {
+      await db.collection('paymentClaims').add({
+        type: 'event',
+        memberEmail: currentUserEmail,
+        memberName: currentUserName,
+        eventId: pendingEventId,
+        eventTitle: pendingEventTitle,
+        eventDateLabel: pendingEventDateLabel,
+        amount: pendingEventPrice,
+        method: pendingEventMethod || 'UPI',
+        utr,
+        status: 'pending',
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      eventPayForm.style.display = 'none';
+      eventPayMsg.style.display = 'block';
+    } catch (err) {
+      console.error('Could not submit event payment claim', err);
+      alert('Could not submit — please try again.');
+    } finally {
+      submitBtn.disabled = false;
     }
   });
 </script>
