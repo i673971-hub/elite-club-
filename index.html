@@ -149,19 +149,18 @@
   .nav-toggle{display:none; background:none; border:none; color:#FFFFFF; font-size:1.6rem; cursor:pointer; font-weight:700;}
   @media (max-width:820px){
     nav ul{
-      position:fixed; top:78px; right:16px; left:16px;
-      flex-direction:column; gap:0;
-      background:var(--glass-fill-strong);
-      backdrop-filter:blur(22px) saturate(160%);
-      border:1px solid var(--line);
-      border-radius:20px;
-      max-height:0; overflow:hidden;
-      transition:max-height 0.35s ease;
+      position:fixed; inset:0; z-index:150;
+      flex-direction:column; align-items:center; justify-content:center;
+      gap:2.2rem;
+      background:rgba(4,2,3,0.98);
+      max-height:none; overflow:hidden;
+      opacity:0; pointer-events:none;
+      transition:opacity 0.4s ease;
     }
-    nav ul.open{max-height:400px;}
-    nav ul li{padding:16px 20px; border-top:1px solid var(--line);}
-    nav ul li:first-child{border-top:none;}
-    .nav-toggle{display:block;}
+    nav ul.open{opacity:1; pointer-events:auto;}
+    nav ul li{padding:0; border-top:none;}
+    nav ul a{font-family:'Cormorant Garamond', serif; font-size:1.8rem; letter-spacing:0.02em; text-transform:none;}
+    .nav-toggle{display:block; position:relative; z-index:160;}
   }
 
   /* ===== Hero ===== */
@@ -777,7 +776,7 @@
     <svg class="seal-mini" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="47" stroke="#F5F0EE" stroke-width="2"/><circle cx="50" cy="50" r="38" stroke="#F5F0EE" stroke-width="1"/><text x="50" y="60" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" fill="#F5F0EE">EC</text></svg>
     Elite Club
   </div>
-  <button class="nav-toggle" aria-label="Toggle menu" onclick="document.getElementById('navlinks').classList.toggle('open')">&#9776;</button>
+  <button class="nav-toggle" id="navToggleBtn" aria-label="Toggle menu" onclick="const el=document.getElementById('navlinks'); const open=el.classList.toggle('open'); document.getElementById('navToggleBtn').innerHTML = open ? '&times;' : '&#9776;';">&#9776;</button>
   <ul id="navlinks">
     <li><a href="#about">Charter</a></li>
     <li><a href="#events">Calendar</a></li>
@@ -1857,6 +1856,16 @@
   }
   window.addEventListener('scroll', updateNavCompact, { passive: true });
   updateNavCompact();
+
+  // Close the full-screen mobile menu after tapping a link
+  const navlinks = document.getElementById('navlinks');
+  const navToggleBtn = document.getElementById('navToggleBtn');
+  navlinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navlinks.classList.remove('open');
+      navToggleBtn.innerHTML = '&#9776;';
+    });
+  });
 </script>
 
 <script type="importmap">
