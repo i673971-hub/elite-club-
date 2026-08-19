@@ -101,7 +101,7 @@
 
   /* ===== Nav ===== */
   nav{
-    position:fixed; top:16px; left:50%; transform:translateX(-50%); z-index:50;
+    position:fixed; top:16px; left:0; right:0; margin:0 auto; z-index:50;
     display:flex; align-items:center; justify-content:space-between;
     gap:24px;
     padding:14px 28px;
@@ -776,7 +776,7 @@
     <svg class="seal-mini" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="47" stroke="#F5F0EE" stroke-width="2"/><circle cx="50" cy="50" r="38" stroke="#F5F0EE" stroke-width="1"/><text x="50" y="60" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" fill="#F5F0EE">EC</text></svg>
     Elite Club
   </div>
-  <button class="nav-toggle" id="navToggleBtn" aria-label="Toggle menu" onclick="const el=document.getElementById('navlinks'); const open=el.classList.toggle('open'); document.getElementById('navToggleBtn').innerHTML = open ? '&times;' : '&#9776;';">&#9776;</button>
+  <button class="nav-toggle" id="navToggleBtn" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
   <ul id="navlinks">
     <li><a href="#about">Charter</a></li>
     <li><a href="#events">Calendar</a></li>
@@ -1857,14 +1857,21 @@
   window.addEventListener('scroll', updateNavCompact, { passive: true });
   updateNavCompact();
 
-  // Close the full-screen mobile menu after tapping a link
+  // Mobile menu — one function owns both the open state and the icon,
+  // so they can never drift out of sync with each other.
   const navlinks = document.getElementById('navlinks');
   const navToggleBtn = document.getElementById('navToggleBtn');
+  function setMobileNav(open){
+    navlinks.classList.toggle('open', open);
+    navToggleBtn.innerHTML = open ? '&times;' : '&#9776;';
+    navToggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  setMobileNav(false); // explicit closed state on load, regardless of any stale markup
+  navToggleBtn.addEventListener('click', () => {
+    setMobileNav(!navlinks.classList.contains('open'));
+  });
   navlinks.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      navlinks.classList.remove('open');
-      navToggleBtn.innerHTML = '&#9776;';
-    });
+    a.addEventListener('click', () => setMobileNav(false));
   });
 </script>
 
