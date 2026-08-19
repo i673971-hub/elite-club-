@@ -1269,6 +1269,7 @@
   /* ===== Events: load, seed, render ===== */
   const eventListContainer = document.getElementById('eventListContainer');
   const MONTH_ABBR = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  let isAdminUser = false; // set true in onAuthStateChanged when signed-in user matches ADMIN_EMAIL
 
   function formatEventDateLabel(sortDate, time, location) {
     const d = new Date(sortDate + 'T00:00:00');
@@ -1311,10 +1312,21 @@
         const { display } = formatEventDateLabel(d.sortDate, d.time || '00:00', d.location || '');
         const price = Number(d.price) || 0;
         const btnLabel = 'Reserve';
+        const priceTag = price > 0 ? '<span style="display:block;margin-top:2px;">&#8377;' + price + '</span>' : '';
+        const deleteBtn = isAdminUser
+          ? '<button class="btn btn-ghost delete-event-btn" data-event-id="' + doc.id + '" style="margin-left:8px;color:#FF2A44;border-color:#FF2A44;">Delete</button>'
+          : '';
+        const editBtn = isAdminUser
+          ? '<button class="btn btn-ghost edit-event-btn" data-event-id="' + doc.id + '" style="margin-left:8px;">Edit</button>'
+          : '';
         html += '<div class="event-row">' +
           '<div class="event-date">' + month + '<span class="day">' + day + '</span></div>' +
-          '<div class="event-info"><h3>' + (d.title || 'Untitled Event') + '</h3><span>' + display + '</span></div>' +
+          '<div class="event-info"><h3>' + (d.title || 'Untitled Event') + '</h3><span>' + display + priceTag + '</span></div>' +
+          '<div>' +
           '<button class="btn btn-ghost reserve-btn" data-event-id="' + doc.id + '" data-event="' + (d.title || '').replace(/"/g, '&quot;') + '" data-date="' + display + '" data-price="' + price + '">' + btnLabel + '</button>' +
+          editBtn +
+          deleteBtn +
+          '</div>' +
           '</div>';
       });
       eventListContainer.innerHTML = html;
@@ -1678,12 +1690,15 @@
       loadPublicLeaderboard();
 
       if (user.email === ADMIN_EMAIL) {
+        isAdminUser = true;
         adminPanel.style.display = 'block';
         adminEventPanel.style.display = 'block';
         pendingPaymentsPanel.style.display = 'block';
         loadAllMembersForAdmin();
         loadPendingPayments();
+        renderEvents(); // re-render so Delete buttons show up now that we know it's the admin
       } else {
+        isAdminUser = false;
         adminPanel.style.display = 'none';
         adminEventPanel.style.display = 'none';
         pendingPaymentsPanel.style.display = 'none';
@@ -1724,6 +1739,63 @@
   const eventPayMsg = document.getElementById('eventPayMsg');
 
   eventListContainer.addEventListener('click', async (e) => {
+    const editBtn = e.target.closest('.edit-event-btn');
+    if (editBtn) {
+      if (!isAdminUser) return;
+      const eventId = editBtn.getAttribute('data-event-id');
+      try {
+        const ref = db.collection('events').doc(eventId);
+        const snap = await ref.get();
+        if (!snap.exists) { alert('Event not found.'); return; }
+        const d = snap.data();
+
+        const newTitle = prompt('Event title:', d.title || '');
+        if (newTitle === null) return; // cancelled
+        const newDate = prompt('Date (YYYY-MM-DD):', d.sortDate || '');
+        if (newDate === null) return;
+        const newTime = prompt('Time (24h, HH:MM):', d.time || '');
+        if (newTime === null) return;
+        const newLocation = prompt('Location:', d.location || '');
+        if (newLocation === null) return;
+        const newPriceRaw = prompt('Price in Rs (0 for free):', String(Number(d.price) || 0));
+        if (newPriceRaw === null) return;
+        const newPrice = Number(newPriceRaw) || 0;
+
+        if (!newTitle.trim() || !newDate || !newTime || !newLocation.trim()) {
+          alert('All fields are required.');
+          return;
+        }
+
+        await ref.update({
+          title: newTitle.trim(),
+          sortDate: newDate,
+          time: newTime,
+          location: newLocation.trim(),
+          price: newPrice
+        });
+        renderEvents();
+      } catch (err) {
+        console.error('Could not update event', err);
+        alert('Could not update the event. Please try again.');
+      }
+      return;
+    }
+
+    const deleteBtn = e.target.closest('.delete-event-btn');
+    if (deleteBtn) {
+      if (!isAdminUser) return;
+      const eventId = deleteBtn.getAttribute('data-event-id');
+      if (!confirm('Delete this event? This cannot be undone.')) return;
+      try {
+        await db.collection('events').doc(eventId).delete();
+        renderEvents();
+      } catch (err) {
+        console.error('Could not delete event', err);
+        alert('Could not delete the event. Please try again.');
+      }
+      return;
+    }
+
     const btn = e.target.closest('.reserve-btn');
     if (!btn) return;
 
