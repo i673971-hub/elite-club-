@@ -347,29 +347,48 @@
   }
 
   /* ===== Expanding cards (reusable) — narrow vertical-title cards that
-     expand on tap/click to reveal an icon and description, one at a time ===== */
+     expand on tap/click to reveal an icon and description, one at a time.
+     Cinematic treatment: layered gradients, a glass sheen highlight,
+     deep shadow falloff, and a container-level pan toward the active card. */
   .expand-cards{
     display:flex; gap:12px; justify-content:center; flex-wrap:wrap; align-items:flex-end;
-    max-width:1000px; margin:0 auto;
+    max-width:1000px; margin:0 auto; padding:26px 0 6px;
+    background:radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 65%);
+    transition:transform 0.6s cubic-bezier(0.22,0.9,0.2,1);
   }
   .expand-card{
     width:72px; height:280px;
-    background:linear-gradient(180deg, #2b2b2b 0%, #1a1a1a 100%);
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.09) 0%, transparent 30%),
+      linear-gradient(180deg, #262626 0%, #141414 60%, #0a0a0a 100%);
     border-radius:18px; border:1px solid rgba(255,255,255,0.09);
     display:flex; flex-direction:column; align-items:center; justify-content:space-between;
     padding:22px 10px; cursor:pointer; position:relative; overflow:hidden;
-    transition:all 0.45s cubic-bezier(0.25,0.8,0.25,1); user-select:none;
+    transition:all 0.5s cubic-bezier(0.22,0.9,0.2,1); user-select:none;
+    box-shadow:0 10px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
   }
+  .expand-card::before{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.06) 48%, transparent 66%);
+    transform:translateX(-120%); transition:transform 0.9s ease;
+    pointer-events:none;
+  }
+  .expand-card:hover::before, .expand-card.active::before{transform:translateX(0);}
   .expand-card:hover{
-    transform:translateY(-8px); border-color:rgba(255,255,255,0.2);
-    background:linear-gradient(180deg, #333 0%, #222 100%);
+    transform:translateY(-8px); border-color:rgba(255,255,255,0.22);
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.12) 0%, transparent 32%),
+      linear-gradient(180deg, #2e2e2e 0%, #191919 60%, #0d0d0d 100%);
   }
   .expand-card.active{
-    width:min(320px, 82vw); height:320px;
-    background:linear-gradient(180deg, #2f2f2f 0%, #1f1f1f 100%);
-    border-color:rgba(255,255,255,0.22); padding:28px 24px;
+    width:min(340px, 82vw); height:320px;
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.1) 0%, transparent 34%),
+      linear-gradient(180deg, #303030 0%, #1c1c1c 55%, #0a0a0a 100%);
+    border-color:rgba(255,255,255,0.24); padding:28px 24px;
     align-items:flex-start; text-align:left;
-    transform:translateY(-10px); box-shadow:0 25px 50px rgba(0,0,0,0.55);
+    transform:translateY(-12px);
+    box-shadow:0 34px 70px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.09);
   }
   .ec-title{
     writing-mode:vertical-rl; transform:rotate(180deg);
@@ -380,9 +399,12 @@
     writing-mode:horizontal-tb; transform:none;
     font-family:'Cormorant Garamond', serif; font-size:1.3rem; font-weight:600;
     color:#fff; margin-bottom:12px;
+    text-shadow:0 2px 12px rgba(255,255,255,0.15);
   }
   .ec-icon{width:24px; height:24px; opacity:0.7; color:#ccc; transition:all 0.4s ease; flex-shrink:0;}
-  .expand-card.active .ec-icon{width:30px; height:30px; opacity:1; color:#fff; margin-bottom:8px;}
+  .expand-card.active .ec-icon{width:30px; height:30px; opacity:1; color:#fff; margin-bottom:8px;
+    filter:drop-shadow(0 0 10px rgba(255,255,255,0.35));
+  }
   .ec-content{
     display:none; font-family:'Lora', serif; font-size:0.92rem; color:#aaa;
     line-height:1.55; margin-top:4px; opacity:0; transform:translateY(10px);
@@ -392,9 +414,10 @@
   @media (max-width:700px){
     .expand-card{width:52px; height:210px;}
     .expand-card.active{width:100%; max-width:320px;}
+    .expand-cards{transform:none !important;}
   }
   @media (prefers-reduced-motion: reduce){
-    .expand-card, .expand-card .ec-title, .expand-card .ec-icon, .expand-card .ec-content{transition:none;}
+    .expand-card, .expand-card .ec-title, .expand-card .ec-icon, .expand-card .ec-content, .expand-cards, .expand-card::before{transition:none;}
   }
 
   /* ===== For Whom ===== */
@@ -2194,18 +2217,36 @@
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-  // Expanding cards — one active at a time per group, click or keyboard (Enter/Space)
+  // Expanding cards — one active at a time per group, click or keyboard (Enter/Space).
+  // A subtle "camera pan": the whole row shifts a few pixels toward whichever
+  // card becomes active, then re-centers when none are active.
+  const reduceMotionForCards = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('[data-expand-group]').forEach(group => {
     function setActiveCard(card, active){
       card.classList.toggle('active', active);
       card.setAttribute('aria-expanded', active ? 'true' : 'false');
+    }
+    function panTowards(card){
+      if (reduceMotionForCards) return;
+      if (!card){ group.style.transform = ''; return; }
+      const groupRect = group.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+      const cardCenter = cardRect.left + cardRect.width / 2;
+      const groupCenter = groupRect.left + groupRect.width / 2;
+      const offset = Math.max(-24, Math.min(24, (groupCenter - cardCenter) * 0.12));
+      group.style.transform = `translateX(${offset}px)`;
     }
     group.addEventListener('click', (e) => {
       const card = e.target.closest('.expand-card');
       if (!card || !group.contains(card)) return;
       const wasActive = card.classList.contains('active');
       group.querySelectorAll('.expand-card').forEach(c => setActiveCard(c, false));
-      if (!wasActive) setActiveCard(card, true);
+      if (!wasActive){
+        setActiveCard(card, true);
+        requestAnimationFrame(() => panTowards(card));
+      } else {
+        panTowards(null);
+      }
     });
     group.querySelectorAll('.expand-card').forEach(card => {
       card.addEventListener('keydown', (e) => {
