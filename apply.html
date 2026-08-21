@@ -405,30 +405,23 @@
       <p>Applications are reviewed personally. There is no automated process.</p>
     </div>
 
-    <form class="apply-form reveal" id="applyForm" novalidate>
+    <div class="apply-form reveal" id="signInGate">
+      <p style="text-align:center; margin-bottom:20px; color:var(--ink-muted); font-style:italic;">Sign in with Google to submit your application. This ties your application to your account so we can follow up.</p>
+      <button class="btn btn-solid" id="applyGoogleSignIn" style="width:100%; cursor:pointer;">Sign in with Google</button>
+    </div>
+
+    <form class="apply-form reveal" id="applyForm" novalidate style="display:none;">
       <div class="field">
         <label for="fullName">Full Name</label>
-        <input id="fullName" name="fullName" type="text" autocomplete="name" required>
+        <input id="fullName" name="fullName" type="text" autocomplete="name" required readonly>
       </div>
       <div class="field">
         <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required>
+        <input id="email" name="email" type="email" autocomplete="email" required readonly>
       </div>
       <div class="field">
-        <label for="intro">Brief Introduction — Why do you seek membership?</label>
-        <textarea id="intro" name="intro" maxlength="1400" required></textarea>
-        <div class="hint"><span>Maximum 200 words</span><span id="wordCount">0 / 200</span></div>
-      </div>
-      <div class="field">
-        <label for="link">Optional Link <span style="opacity:0.6; text-transform:none; letter-spacing:0;">(personal site, LinkedIn, or work)</span></label>
-        <input id="link" name="link" type="url" placeholder="https://">
-      </div>
-      <button type="submit" class="btn btn-solid">Submit Application</button>
-    </form>
-
-    <div class="apply-success" id="applySuccess" role="status">
-      <h3>Your application has been received.</h3>
-      <p>All applications are treated with discretion. You will receive a response within 7–14 days.</p>
-    </div>
-
-    <p 
+        <label for="tier">Tier You're Applying For</label>
+        <select id="tier" name="tier" required style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:10px; padding:13px 16px; color:var(--ink); font-family:'Lora', serif; font-size:0.98rem;">
+          <option value="Executive">Executive — &#8377;999/yr</option>
+          <option value="Premier">Premier — &#8377;2,999/yr</option>
+ 
