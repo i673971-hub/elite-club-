@@ -10,18 +10,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#F5F0EE;
-    --ink-muted: rgba(245,240,238,0.62);
-    --forest:#0A0505;
-    --brass:#E8323C;
-    --brass-bright:#FF5A54;
-    --gold:#B08D4F;
-    --gold-bright:#D4B172;
-    --gold-line: rgba(176,141,79,0.4);
-    --line: rgba(232,50,60,0.22);
-    --glass-fill: rgba(255,60,50,0.05);
-    --glass-fill-strong: rgba(255,60,50,0.1);
-    --dark-text:#1A0808;
+    --ink:#FFFFFF;
+    --ink-muted: rgba(255,255,255,0.55);
+    --forest:#000000;
+    --brass:#FFFFFF;
+    --brass-bright:#FFFFFF;
+    --gold:#8a8a8a;
+    --gold-bright:#FFFFFF;
+    --gold-line: rgba(255,255,255,0.2);
+    --line: rgba(255,255,255,0.14);
+    --glass-fill: rgba(255,255,255,0.045);
+    --glass-fill-strong: rgba(255,255,255,0.1);
+    --dark-text:#0a0a0a;
     --ease: cubic-bezier(.2,.8,.2,1);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -43,19 +43,21 @@
     content:"";
     position:fixed; inset:-10%;
     background:
-      radial-gradient(circle at 50% 6%, rgba(120,14,20,0.42), transparent 52%),
-      radial-gradient(circle at 90% 22%, rgba(80,10,16,0.26), transparent 46%),
-      radial-gradient(circle at 10% 80%, rgba(64,8,14,0.28), transparent 46%),
-      radial-gradient(circle at 50% 98%, rgba(30,4,6,0.5), transparent 55%);
-    filter:blur(100px);
+      radial-gradient(circle at 50% 4%, rgba(255,255,255,0.07), transparent 48%),
+      radial-gradient(circle at 92% 20%, rgba(255,255,255,0.04), transparent 44%),
+      radial-gradient(circle at 8% 82%, rgba(255,255,255,0.045), transparent 44%),
+      radial-gradient(circle at 50% 100%, rgba(0,0,0,0.6), transparent 55%);
+    filter:blur(110px);
     z-index:-3;
-    animation:auroraDrift 30s ease-in-out infinite alternate;
+    animation:auroraDrift 34s ease-in-out infinite alternate;
     pointer-events:none;
   }
   body::after{
     content:"";
     position:fixed; inset:0;
-    background:linear-gradient(180deg, rgba(5,2,2,0.3), rgba(5,2,2,0.6));
+    background:
+      radial-gradient(ellipse at 50% 40%, transparent 40%, rgba(0,0,0,0.55) 82%, rgba(0,0,0,0.85) 100%),
+      linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.62));
     z-index:-1;
     pointer-events:none;
   }
@@ -63,6 +65,51 @@
     position:fixed; inset:-10%; z-index:-2; pointer-events:none;
     opacity:0.045; mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ===== Liquid chrome wave — fixed atmosphere layer, bottom of viewport ===== */
+  .liquid-wave{
+    position:fixed; bottom:0; left:0; width:100%; height:200px;
+    z-index:1; pointer-events:none; overflow:hidden;
+  }
+  .wave-layer{
+    position:absolute; bottom:0; left:-5%; width:110%; height:160px;
+    border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .wave-1{
+    background:linear-gradient(90deg,
+      transparent 0%, rgba(255,255,255,0.02) 15%, rgba(255,255,255,0.12) 35%,
+      rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.12) 65%, rgba(255,255,255,0.02) 85%, transparent 100%);
+    filter:blur(12px);
+    animation:waveMove 9s ease-in-out infinite;
+    opacity:0.8;
+  }
+  .wave-2{
+    height:120px; bottom:-10px;
+    background:linear-gradient(90deg,
+      transparent 0%, rgba(255,255,255,0.04) 20%, rgba(255,255,255,0.15) 45%,
+      rgba(255,255,255,0.15) 55%, rgba(255,255,255,0.04) 80%, transparent 100%);
+    filter:blur(8px);
+    animation:waveMove 7s ease-in-out infinite reverse;
+    opacity:0.6;
+  }
+  .wave-3{
+    height:90px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 40%, transparent 100%);
+    border-radius:100% 100% 0 0;
+    filter:blur(4px);
+    opacity:0.55;
+  }
+  .wave-reflection{
+    position:absolute; bottom:0; left:0; width:100%; height:70px;
+    background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 100%);
+  }
+  @keyframes waveMove{
+    0%, 100%{transform:translateX(0) scaleY(1);}
+    50%{transform:translateX(-40px) scaleY(1.08);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .wave-1, .wave-2{animation:none;}
   }
   @keyframes auroraDrift{
     0%{transform:translate3d(0,0,0) scale(1);}
@@ -87,7 +134,7 @@
 
   /* ===== Header ===== */
   header{
-    position:fixed; top:16px; left:50%; transform:translateX(-50%); z-index:100;
+    position:fixed; top:16px; left:0; right:0; margin:0 auto; z-index:100;
     display:flex; align-items:center; justify-content:space-between; gap:24px;
     padding:14px 28px; width:min(1100px, 92vw);
     border:1px solid transparent; border-radius:999px;
@@ -115,6 +162,7 @@
     transition:opacity 0.25s ease, border-color 0.25s ease;
   }
   nav a:hover{ opacity:1; border-color:var(--gold-bright); }
+  a, button, summary{touch-action:manipulation;}
   .nav-toggle{
     display:none; background:none; border:1px solid var(--gold-line); color:var(--ink);
     font-family:'Jost', sans-serif; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase;
@@ -146,10 +194,13 @@
     text-align:center; padding:170px 6vw 100px; position:relative;
   }
   .hero-sphere-wrap{
-    width:min(420px, 72vw); aspect-ratio:1/1; margin:0 auto 44px; position:relative;
-    filter:drop-shadow(0 0 46px rgba(176,141,79,0.32)) drop-shadow(0 0 90px rgba(232,50,60,0.16));
+    width:min(460px, 82vw); aspect-ratio:3/4; margin:0 auto 30px; position:relative;
+    filter:drop-shadow(0 0 40px rgba(255,255,255,0.18)) drop-shadow(0 0 90px rgba(255,255,255,0.1));
     animation:sealIn 1.4s var(--ease) both;
+    touch-action:pan-y;
+    cursor:grab;
   }
+  .hero-sphere-wrap:active{cursor:grabbing;}
   .hero-sphere-wrap canvas{ width:100%; height:100%; display:block; }
   @keyframes sealIn{ from{opacity:0; transform:scale(0.85);} to{opacity:1; transform:scale(1);} }
   .hero .eyebrow{ display:block; margin-bottom:22px; animation:fadeUp 1s 0.2s both; }
@@ -194,35 +245,79 @@
   .section-head p{ color:var(--ink-muted); font-style:italic; }
   .divider{ width:1px; height:44px; background:var(--gold); margin:0 auto 26px; opacity:0.65; }
 
-  /* ===== Charter ===== */
-  .charter-grid{
-    max-width:900px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:48px 40px;
+  /* ===== Expanding cards (reusable) — narrow vertical-title cards that
+     expand on tap/click to reveal an icon and description, one at a time.
+     Cinematic treatment: layered gradients, glass sheen, deep shadow falloff. ===== */
+  .expand-cards{
+    display:flex; gap:12px; justify-content:center; flex-wrap:wrap; align-items:flex-end;
+    max-width:1000px; margin:0 auto; padding:26px 0 6px;
+    background:radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 65%);
+    transition:transform 0.6s cubic-bezier(0.22,0.9,0.2,1);
   }
-  .charter-card{
-    position:relative; padding-top:26px; border-top:1px solid var(--gold-line);
+  .expand-card{
+    width:72px; height:280px;
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.09) 0%, transparent 30%),
+      linear-gradient(180deg, #262626 0%, #141414 60%, #0a0a0a 100%);
+    border-radius:18px; border:1px solid rgba(255,255,255,0.09);
+    display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+    padding:22px 10px; cursor:pointer; position:relative; overflow:hidden;
+    transition:all 0.5s cubic-bezier(0.22,0.9,0.2,1); user-select:none;
+    box-shadow:0 10px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
   }
-  .charter-card .num{
-    font-family:'Jost', sans-serif; font-size:0.65rem; letter-spacing:0.14em; color:var(--gold-bright);
-    text-transform:uppercase; display:block; margin-bottom:16px;
+  .expand-card::before{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.06) 48%, transparent 66%);
+    transform:translateX(-120%); transition:transform 0.9s ease;
+    pointer-events:none;
   }
-  .charter-card h3{ font-size:1.3rem; margin-bottom:10px; color:#fff; }
-  .charter-card p{ color:var(--ink-muted); font-size:0.94rem; }
-  @media (max-width:900px){ .charter-grid{ grid-template-columns:1fr; max-width:460px; gap:36px; } }
-
-  /* ===== Membership ===== */
-  .membership-grid{
-    max-width:960px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:44px;
+  .expand-card:hover::before, .expand-card.active::before{transform:translateX(0);}
+  .expand-card:hover{
+    transform:translateY(-8px); border-color:rgba(255,255,255,0.22);
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.12) 0%, transparent 32%),
+      linear-gradient(180deg, #2e2e2e 0%, #191919 60%, #0d0d0d 100%);
   }
-  .membership-card{
-    padding-top:24px; border-top:1px solid var(--gold-line);
-    transition:border-color 0.35s ease;
+  .expand-card.active{
+    width:min(340px, 82vw); height:320px;
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.1) 0%, transparent 34%),
+      linear-gradient(180deg, #303030 0%, #1c1c1c 55%, #0a0a0a 100%);
+    border-color:rgba(255,255,255,0.24); padding:28px 24px;
+    align-items:flex-start; text-align:left;
+    transform:translateY(-12px);
+    box-shadow:0 34px 70px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.09);
   }
-  .membership-card:hover{ border-color:var(--gold-bright); }
-  .membership-card .eyebrow{ display:block; margin-bottom:14px; }
-  .membership-card h3{ font-size:1.25rem; margin-bottom:12px; color:#fff; }
-  .membership-card p{ color:var(--ink-muted); font-size:0.94rem; }
-  @media (max-width:900px){ .membership-grid{ grid-template-columns:1fr; max-width:460px; gap:34px; } }
+  .ec-title{
+    writing-mode:vertical-rl; transform:rotate(180deg);
+    font-family:'Jost', sans-serif; font-size:0.8rem; letter-spacing:0.06em;
+    color:#ccc; white-space:nowrap; transition:all 0.4s ease;
+  }
+  .expand-card.active .ec-title{
+    writing-mode:horizontal-tb; transform:none;
+    font-family:'Cormorant Garamond', serif; font-size:1.3rem; font-weight:600;
+    color:#fff; margin-bottom:12px;
+    text-shadow:0 2px 12px rgba(255,255,255,0.15);
+  }
+  .ec-icon{width:24px; height:24px; opacity:0.7; color:#ccc; transition:all 0.4s ease; flex-shrink:0;}
+  .expand-card.active .ec-icon{width:30px; height:30px; opacity:1; color:#fff; margin-bottom:8px;
+    filter:drop-shadow(0 0 10px rgba(255,255,255,0.35));
+  }
+  .ec-content{
+    display:none; font-family:'Lora', serif; font-size:0.92rem; color:#aaa;
+    line-height:1.55; margin-top:4px; opacity:0; transform:translateY(10px);
+    transition:all 0.4s ease 0.1s;
+  }
+  .expand-card.active .ec-content{display:block; opacity:1; transform:translateY(0);}
   .membership-cta{ text-align:center; margin-top:56px; }
+  @media (max-width:700px){
+    .expand-card{width:52px; height:210px;}
+    .expand-card.active{width:100%; max-width:320px;}
+    .expand-cards{transform:none !important;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .expand-card, .expand-card .ec-title, .expand-card .ec-icon, .expand-card .ec-content, .expand-cards, .expand-card::before{transition:none;}
+  }
 
   /* ===== The Society ===== */
   .society{
@@ -307,9 +402,16 @@
 
 <div id="grain-overlay" aria-hidden="true"></div>
 
+<div class="liquid-wave" aria-hidden="true">
+  <div class="wave-layer wave-1"></div>
+  <div class="wave-layer wave-2"></div>
+  <div class="wave-layer wave-3"></div>
+  <div class="wave-reflection"></div>
+</div>
+
 <header id="siteHeader">
   <a href="index.html" class="brand">
-    <svg class="seal-mini" viewBox="0 0 100 100" fill="none" aria-hidden="true"><circle cx="50" cy="50" r="47" stroke="#B08D4F" stroke-width="2"/><circle cx="50" cy="50" r="38" stroke="#B08D4F" stroke-width="1"/><text x="50" y="60" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" fill="#B08D4F">EC</text></svg>
+    <svg class="seal-mini" viewBox="0 0 100 100" fill="none" aria-hidden="true"><circle cx="50" cy="50" r="47" stroke="#F5F0EE" stroke-width="2"/><circle cx="50" cy="50" r="38" stroke="#F5F0EE" stroke-width="1"/><text x="50" y="60" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" fill="#F5F0EE">EC</text></svg>
     Elite Club
   </a>
   <nav aria-label="Primary">
@@ -335,93 +437,11 @@
 
 <main id="hero">
   <section class="hero">
-    <div class="hero-sphere-wrap" aria-hidden="true">
-      <canvas id="heroSphere"></canvas>
+    <div class="hero-sphere-wrap" id="heroCreatureWrap" role="img" aria-label="A glossy dark, bioluminescent creature drifting, rendered in 3D">
+      <canvas id="heroCreature"></canvas>
     </div>
     <span class="eyebrow">Est. 2026 &nbsp;&middot;&nbsp; A Society of Members</span>
     <h1>Elite <em>Club</em></h1>
     <p class="lede">A gathering place for those who value fellowship, standards, and the quiet pursuit of doing things properly.</p>
     <div class="cta-row">
-      <a href="#apply" class="btn btn-solid">Request Membership</a>
-      <a href="#charter" class="btn btn-ghost">Read the Charter</a>
-    </div>
-  </section>
-
-  <section id="charter" aria-labelledby="charter-head">
-    <div class="section-head reveal">
-      <span class="eyebrow">I</span>
-      <h2 id="charter-head">The Charter</h2>
-      <p>These are the principles by which we gather.</p>
-    </div>
-    <div class="charter-grid reveal">
-      <div class="charter-card"><span class="num">01</span><h3>Fellowship</h3><p>We seek genuine connection over network size.</p></div>
-      <div class="charter-card"><span class="num">02</span><h3>Standards</h3><p>Excellence in character, craft, and conduct is non-negotiable.</p></div>
-      <div class="charter-card"><span class="num">03</span><h3>Discretion</h3><p>What is shared within the Society remains within the Society.</p></div>
-      <div class="charter-card"><span class="num">04</span><h3>Quiet Pursuit</h3><p>We prefer substance over spectacle. Progress over performance.</p></div>
-      <div class="charter-card"><span class="num">05</span><h3>Stewardship</h3><p>We leave every space, conversation, and relationship better than we found it.</p></div>
-    </div>
-  </section>
-
-  <section id="membership" aria-labelledby="membership-head">
-    <div class="section-head reveal">
-      <span class="eyebrow">II</span>
-      <h2 id="membership-head">Membership</h2>
-      <p>Membership is selective and limited. We value quality of character over quantity of members.</p>
-    </div>
-    <div class="membership-grid reveal">
-      <div class="membership-card">
-        <span class="eyebrow">Who We Seek</span>
-        <h3>Individuals of quiet distinction</h3>
-        <p>Individuals who take their work, relationships, and personal standards seriously. Those who understand that true distinction is quiet.</p>
-      </div>
-      <div class="membership-card">
-        <span class="eyebrow">What Membership Offers</span>
-        <h3>Access, and good company</h3>
-        <p>Access to private gatherings, a curated community of peers, shared resources and introductions, a place to think and speak freely among equals.</p>
-      </div>
-      <div class="membership-card">
-        <span class="eyebrow">What Is Expected</span>
-        <h3>Contribution and discretion</h3>
-        <p>Contribution, discretion, and adherence to the Charter.</p>
-      </div>
-    </div>
-    <div class="membership-cta reveal">
-      <a href="#apply" class="btn btn-solid">Request Membership</a>
-    </div>
-  </section>
-
-  <section id="society" class="society" aria-labelledby="society-head">
-    <div class="society-inner reveal">
-      <span class="eyebrow" id="society-head">III &nbsp;&middot;&nbsp; The Society</span>
-      <div class="divider" style="margin-top:26px;"></div>
-      <blockquote>A society is not measured by how many it admits, but by the standard it upholds.</blockquote>
-    </div>
-  </section>
-
-  <section id="apply" aria-labelledby="apply-head">
-    <div class="section-head reveal">
-      <span class="eyebrow">IV</span>
-      <h2 id="apply-head">Request Membership</h2>
-      <p>Applications are reviewed personally. There is no automated process.</p>
-    </div>
-
-    <div class="apply-form reveal" id="signInGate">
-      <p style="text-align:center; margin-bottom:20px; color:var(--ink-muted); font-style:italic;">Sign in with Google to submit your application. This ties your application to your account so we can follow up.</p>
-      <button class="btn btn-solid" id="applyGoogleSignIn" style="width:100%; cursor:pointer;">Sign in with Google</button>
-    </div>
-
-    <form class="apply-form reveal" id="applyForm" novalidate style="display:none;">
-      <div class="field">
-        <label for="fullName">Full Name</label>
-        <input id="fullName" name="fullName" type="text" autocomplete="name" required readonly>
-      </div>
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required readonly>
-      </div>
-      <div class="field">
-        <label for="tier">Tier You're Applying For</label>
-        <select id="tier" name="tier" required style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:10px; padding:13px 16px; color:var(--ink); font-family:'Lora', serif; font-size:0.98rem;">
-          <option value="Executive">Executive — &#8377;999/yr</option>
-          <option value="Premier">Premier — &#8377;2,999/yr</option>
- 
+      <a href="#apply
