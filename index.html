@@ -112,6 +112,67 @@
     .wave-1, .wave-2{animation:none;}
   }
 
+  /* ===== Intro Gate — plays once before the site unlocks ===== */
+  #introGate{
+    position:fixed; inset:0; z-index:9999;
+    background:#000;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    transition:opacity 1s ease;
+  }
+  #introGate.gate-hidden{
+    opacity:0; pointer-events:none;
+  }
+  #introGate canvas{position:absolute; inset:0; width:100%; height:100%; display:block;}
+  .gate-content{
+    position:relative; z-index:2; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:20px;
+    padding:0 6vw;
+  }
+  .gate-year{
+    font-family:'Jost', sans-serif; font-size:0.72rem; letter-spacing:0.3em;
+    color:rgba(255,255,255,0.55); opacity:0; transition:opacity 1s ease;
+  }
+  .gate-year.gate-show{opacity:1;}
+  .gate-text{
+    font-family:'Cormorant Garamond', serif; font-weight:500; font-style:italic;
+    font-size:clamp(1.5rem, 4.2vw, 2.6rem); color:#fff;
+    letter-spacing:0.01em; opacity:0;
+    transition:opacity 1.1s ease, transform 1.1s ease;
+    transform:translateY(10px);
+    position:absolute;
+  }
+  .gate-text.gate-show{opacity:1; transform:translateY(0); position:relative;}
+  .gate-monogram{
+    width:64px; height:64px; opacity:0; transform:scale(0.85);
+    transition:opacity 1.2s ease, transform 1.2s ease;
+  }
+  .gate-monogram.gate-show{opacity:1; transform:scale(1);}
+  .gate-wordmark{
+    font-family:'Cormorant Garamond', serif; font-weight:700; font-size:1.4rem;
+    letter-spacing:0.06em; color:#fff; opacity:0; transition:opacity 1s ease 0.2s;
+  }
+  .gate-wordmark.gate-show{opacity:1;}
+  .gate-enter{
+    margin-top:18px;
+    font-family:'Jost', sans-serif; font-size:0.7rem; letter-spacing:0.16em; text-transform:uppercase;
+    color:#fff; background:none; border:1px solid rgba(255,255,255,0.3);
+    border-radius:999px; padding:13px 32px; cursor:pointer;
+    opacity:0; transition:opacity 1s ease 0.4s, border-color 0.3s ease, background 0.3s ease;
+  }
+  .gate-enter.gate-show{opacity:1;}
+  .gate-enter:hover{border-color:#fff; background:rgba(255,255,255,0.08);}
+  .gate-skip{
+    position:absolute; top:24px; right:24px; z-index:3;
+    font-family:'Jost', sans-serif; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase;
+    color:rgba(255,255,255,0.5); background:none; border:none; cursor:pointer;
+    padding:10px;
+  }
+  .gate-skip:hover{color:#fff;}
+  @media (prefers-reduced-motion: reduce){
+    .gate-text, .gate-year, .gate-monogram, .gate-wordmark, .gate-enter{transition:none;}
+  }
+
   @keyframes auroraDrift{
     0%{transform:translate3d(0,0,0) scale(1);}
     100%{transform:translate3d(-3%,2%,0) scale(1.08);}
@@ -992,7 +1053,173 @@
 </head>
 <body>
 
+<div id="introGate">
+  <canvas id="introGateCanvas" aria-hidden="true"></canvas>
+  <button class="gate-skip" id="gateSkip">Skip</button>
+  <div class="gate-content">
+    <span class="gate-year" id="gateYear">2026</span>
+    <span class="gate-text" id="gateText1">A quiet idea</span>
+    <span class="gate-text" id="gateText2">found its people</span>
+    <span class="gate-text" id="gateText3">and became a society</span>
+    <svg class="gate-monogram" id="gateMonogram" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="47" stroke="#FFFFFF" stroke-width="1.5"/><circle cx="50" cy="50" r="38" stroke="#FFFFFF" stroke-width="1"/><text x="50" y="60" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="30" fill="#FFFFFF">EC</text></svg>
+    <span class="gate-wordmark" id="gateWordmark">ELITE CLUB</span>
+    <button class="gate-enter" id="gateEnter">Enter</button>
+  </div>
+</div>
+
 <div id="grain-overlay" aria-hidden="true"></div>
+
+<script>
+(function(){
+  const gate = document.getElementById('introGate');
+  const canvas = document.getElementById('introGateCanvas');
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SEEN_KEY = 'eliteClubGateSeen';
+
+  const els = {
+    year: document.getElementById('gateYear'),
+    t1: document.getElementById('gateText1'),
+    t2: document.getElementById('gateText2'),
+    t3: document.getElementById('gateText3'),
+    mono: document.getElementById('gateMonogram'),
+    word: document.getElementById('gateWordmark'),
+    enter: document.getElementById('gateEnter'),
+    skip: document.getElementById('gateSkip')
+  };
+
+  // Already seen this session — skip straight past it, no lock, no replay.
+  if (sessionStorage.getItem(SEEN_KEY)) {
+    gate.classList.add('gate-hidden');
+    gate.style.display = 'none';
+    return;
+  }
+
+  // Lock the page behind the gate while it plays.
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+
+  function dismiss(){
+    sessionStorage.setItem(SEEN_KEY, '1');
+    gate.classList.add('gate-hidden');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+    cancelAnimationFrame(rafId);
+    setTimeout(() => { gate.style.display = 'none'; }, 1000);
+  }
+  els.enter.addEventListener('click', dismiss);
+  els.skip.addEventListener('click', dismiss);
+
+  // Reduced motion: skip straight to the final state, no growing network.
+  if (reduceMotion) {
+    [els.mono, els.word, els.enter].forEach(el => el.classList.add('gate-show'));
+    ctx.canvas.remove();
+    return;
+  }
+
+  function resize(){
+    canvas.width = window.innerWidth * Math.min(window.devicePixelRatio || 1, 2);
+    canvas.height = window.innerHeight * Math.min(window.devicePixelRatio || 1, 2);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Starfield — static faint dots, twinkling gently.
+  const STAR_COUNT = 140;
+  const stars = Array.from({ length: STAR_COUNT }, () => ({
+    x: Math.random(), y: Math.random(),
+    r: 0.5 + Math.random() * 1.2,
+    phase: Math.random() * Math.PI * 2
+  }));
+
+  // Node network — grows from a single seed node.
+  const MAX_NODES = 46;
+  const nodes = [{ x: 0.5, y: 0.5, vx: 0, vy: 0, born: 0 }];
+  function addNode(t){
+    if (nodes.length >= MAX_NODES) return;
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 0.08 + Math.random() * 0.32;
+    const parent = nodes[Math.floor(Math.random() * nodes.length)];
+    let x = parent.x + Math.cos(angle) * dist;
+    let y = parent.y + Math.sin(angle) * dist * 0.7;
+    x = Math.max(0.08, Math.min(0.92, x));
+    y = Math.max(0.1, Math.min(0.9, y));
+    nodes.push({ x, y, vx: (Math.random()-0.5)*0.0004, vy: (Math.random()-0.5)*0.0004, born: t });
+  }
+
+  const start = performance.now();
+  let rafId;
+  let phase = 0;
+
+  function setText(el, show){ el.classList.toggle('gate-show', show); }
+
+  function draw(now){
+    const t = (now - start) / 1000;
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // stars
+    stars.forEach(s => {
+      const tw = 0.35 + Math.sin(t * 0.6 + s.phase) * 0.25;
+      ctx.beginPath();
+      ctx.arc(s.x * w, s.y * h, s.r * (w/1000), 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + Math.max(0, tw).toFixed(2) + ')';
+      ctx.fill();
+    });
+
+    // grow the network over time
+    if (t > 0.9 && t < 4.2 && Math.random() < 0.12) addNode(t);
+
+    nodes.forEach(n => { n.x += n.vx; n.y += n.vy; });
+
+    // edges — connect each node to its 2 nearest neighbours
+    ctx.lineWidth = Math.max(1, w / 1400);
+    nodes.forEach((n, i) => {
+      const age = t - n.born;
+      if (age < 0) return;
+      const alpha = Math.min(1, age * 2);
+      const dists = nodes.map((m, j) => ({ j, d: (m===n)?Infinity:(m.x-n.x)**2+(m.y-n.y)**2 }))
+                         .sort((a,b) => a.d - b.d).slice(0, 2);
+      dists.forEach(({ j }) => {
+        const m = nodes[j];
+        if (t - m.born < 0) return;
+        ctx.strokeStyle = 'rgba(255,255,255,' + (0.12 * alpha).toFixed(2) + ')';
+        ctx.beginPath();
+        ctx.moveTo(n.x * w, n.y * h);
+        ctx.lineTo(m.x * w, m.y * h);
+        ctx.stroke();
+      });
+    });
+    nodes.forEach(n => {
+      const age = t - n.born;
+      if (age < 0) return;
+      const alpha = Math.min(1, age * 2);
+      const r = (n === nodes[0] ? 3.2 : 2) * (w/1000);
+      ctx.beginPath();
+      ctx.arc(n.x * w, n.y * h, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.75 * alpha).toFixed(2) + ')';
+      ctx.fill();
+    });
+
+    // ---- timed text phases ----
+    if (phase === 0 && t > 0.4){ setText(els.year, true); setText(els.t1, true); phase = 1; }
+    if (phase === 1 && t > 2.6){ setText(els.t1, false); setTimeout(() => setText(els.t2, true), 500); phase = 2; }
+    if (phase === 2 && t > 4.6){ setText(els.t2, false); setTimeout(() => setText(els.t3, true), 500); phase = 3; }
+    if (phase === 3 && t > 6.8){
+      setText(els.t3, false); setText(els.year, false);
+      setTimeout(() => {
+        els.mono.classList.add('gate-show');
+        els.word.classList.add('gate-show');
+        els.enter.classList.add('gate-show');
+      }, 600);
+      phase = 4;
+    }
+
+    rafId = requestAnimationFrame(draw);
+  }
+  rafId = requestAnimationFrame(draw);
+})();
+</script>
 
 <div class="liquid-wave" aria-hidden="true">
   <div class="wave-layer wave-1"></div>
@@ -1016,7 +1243,7 @@
     <li><a href="#faq">FAQ</a></li>
     <li><a href="#donate">Contribute</a></li>
     <li><a href="#contact">Join Us</a></li>
-    <li><a href="apply.html">Apply</a></li>
+    <li><a href="#request-membership">Apply</a></li>
   </ul>
 </nav>
 
@@ -1292,7 +1519,7 @@
         <li>Members' Hall listing</li>
         <li>Quarterly newsletter</li>
       </ul>
-      <a class="btn btn-solid" href="apply.html?tier=Executive">Apply for This Tier</a>
+      <a class="btn btn-solid apply-tier-btn" data-tier="Executive" href="#request-membership">Apply for This Tier</a>
     </div>
     <div class="price-card featured">
       <div class="tier-name">Premier</div>
@@ -1304,7 +1531,7 @@
         <li>Guest privileges (2 per year)</li>
         <li>Founders' Dinner invitation</li>
       </ul>
-      <a class="btn btn-solid" href="apply.html?tier=Premier">Apply for This Tier</a>
+      <a class="btn btn-solid apply-tier-btn" data-tier="Premier" href="#request-membership">Apply for This Tier</a>
     </div>
     <div class="price-card">
       <div class="tier-name">Founding Member</div>
@@ -1316,7 +1543,7 @@
         <li>Unlimited guest privileges</li>
         <li>Voting rights on Club matters</li>
       </ul>
-      <a class="btn btn-solid" href="apply.html?tier=Founding Member">Apply for This Tier</a>
+      <a class="btn btn-solid apply-tier-btn" data-tier="Founding Member" href="#request-membership">Apply for This Tier</a>
     </div>
     <div class="price-card">
       <div class="tier-name">Exclusive</div>
@@ -1328,10 +1555,58 @@
         <li>Private counsel sessions</li>
         <li>Invitation-only retreats</li>
       </ul>
-      <a class="btn btn-solid" href="apply.html?tier=Exclusive">Apply for This Tier</a>
+      <a class="btn btn-solid apply-tier-btn" data-tier="Exclusive" href="#request-membership">Apply for This Tier</a>
     </div>
   </div>
-  <p class="upi-note">Once your application is approved, you'll be able to complete payment (UPI or Crypto) from the Explore section after signing in.</p>
+  <p class="upi-note">Once your application is approved, you'll be able to complete payment (UPI or Crypto) right here after signing in.</p>
+</section>
+
+<section class="request-membership" id="request-membership">
+  <div class="section-head">
+    <span class="eyebrow">Request Membership</span>
+    <h2>Apply Now</h2>
+    <p>Applications are reviewed personally. There is no automated process. Sign in, choose your tier, and tell us why you'd like to join — payment is requested only after approval.</p>
+  </div>
+
+  <div id="applySignedOut" style="max-width:520px; margin:0 auto; text-align:center;">
+    <p style="color:var(--ink-muted); margin-bottom:22px;">Sign in with Google to submit your application.</p>
+    <button class="btn btn-solid" id="applyGoogleSignIn" style="cursor:pointer;">Sign in with Google</button>
+  </div>
+
+  <form id="applyRequestForm" novalidate style="display:none; max-width:640px; margin:0 auto; border:1px solid var(--gold-line); background:var(--glass-fill); backdrop-filter:blur(22px) saturate(150%); -webkit-backdrop-filter:blur(22px) saturate(150%); border-radius:18px; padding:44px 36px;">
+    <div class="field" style="margin-bottom:22px;">
+      <label for="reqName" style="display:block; font-family:'Jost', sans-serif; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:10px;">Full Name</label>
+      <input id="reqName" type="text" readonly style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:10px; padding:13px 16px; color:var(--ink); font-family:'Lora', serif; font-size:0.98rem;">
+    </div>
+    <div class="field" style="margin-bottom:22px;">
+      <label for="reqEmail" style="display:block; font-family:'Jost', sans-serif; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:10px;">Email</label>
+      <input id="reqEmail" type="email" readonly style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:10px; padding:13px 16px; color:var(--ink); font-family:'Lora', serif; font-size:0.98rem;">
+    </div>
+    <div class="field" style="margin-bottom:22px;">
+      <label for="reqTier" style="display:block; font-family:'Jost', sans-serif; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:10px;">Tier You're Applying For</label>
+      <select id="reqTier" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:10px; padding:13px 16px; color:var(--ink); font-family:'Lora', serif; font-size:0.98rem;">
+        <option value="Executive">Executive — &#8377;999/yr</option>
+        <option value="Premier">Premier — &#8377;2,999/yr</option>
+        <option value="Founding Member">Founding Member — &#8377;4,999/yr</option>
+        <option value="Exclusive">Exclusive — &#8377;9,999/yr (by invitation)</option>
+      </select>
+    </div>
+    <div class="field" style="margin-bottom:22px;">
+      <label for="reqIntro" style="display:block; font-family:'Jost', sans-serif; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:10px;">Brief Introduction — Why do you seek membership?</label>
+      <textarea id="reqIntro" maxlength="1400" required style="width:100%; min-height:120px; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:10px; padding:13px 16px; color:var(--ink); font-family:'Lora', serif; font-size:0.98rem; line-height:1.6; resize:vertical;"></textarea>
+      <div style="display:flex; justify-content:space-between; margin-top:8px; font-family:'Jost', sans-serif; font-size:0.62rem; color:var(--ink-muted);"><span>Maximum 200 words</span><span id="reqWordCount">0 / 200</span></div>
+    </div>
+    <div class="field" style="margin-bottom:22px;">
+      <label for="reqLink" style="display:block; font-family:'Jost', sans-serif; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:10px;">Optional Link <span style="opacity:0.6; text-transform:none; letter-spacing:0;">(personal site, LinkedIn, or work)</span></label>
+      <input id="reqLink" type="url" placeholder="https://" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:10px; padding:13px 16px; color:var(--ink); font-family:'Lora', serif; font-size:0.98rem;">
+    </div>
+    <button type="submit" class="btn btn-solid" style="width:100%; cursor:pointer;">Submit Application</button>
+  </form>
+
+  <div id="applyRequestSuccess" role="status" style="display:none; max-width:640px; margin:0 auto; text-align:center; padding:60px 30px; border:1px solid var(--gold-line); border-radius:18px; background:var(--glass-fill);">
+    <h3 style="font-size:1.6rem; margin-bottom:14px; color:#fff;">Your application has been received.</h3>
+    <p style="color:var(--ink-muted); font-style:italic;">All applications are treated with discretion. You will receive a response within 7&ndash;14 days.</p>
+  </div>
 </section>
 
 <section class="faq" id="faq">
@@ -1652,6 +1927,78 @@
   });
 
   signOutBtn.addEventListener('click', () => auth.signOut());
+
+  /* ===== Inline Request Membership (Apply) section ===== */
+  const applySignedOut = document.getElementById('applySignedOut');
+  const applyRequestForm = document.getElementById('applyRequestForm');
+  const applyRequestSuccess = document.getElementById('applyRequestSuccess');
+  const applyGoogleSignIn = document.getElementById('applyGoogleSignIn');
+  const reqTier = document.getElementById('reqTier');
+  const reqIntro = document.getElementById('reqIntro');
+  const reqWordCount = document.getElementById('reqWordCount');
+
+  applyGoogleSignIn.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => console.error(err));
+  });
+
+  // Tier buttons on the pricing cards pre-select the tier here (native
+  // anchor navigation handles the scroll to #request-membership).
+  document.querySelectorAll('.apply-tier-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      reqTier.value = btn.getAttribute('data-tier');
+    });
+  });
+
+  reqIntro.addEventListener('input', () => {
+    const words = reqIntro.value.trim().split(/\s+/).filter(Boolean);
+    reqWordCount.textContent = words.length + ' / 200';
+    reqWordCount.style.color = words.length > 200 ? '#ffffff' : '';
+    reqWordCount.style.fontWeight = words.length > 200 ? '700' : 'normal';
+  });
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      applySignedOut.style.display = 'none';
+      applyRequestForm.style.display = 'block';
+      document.getElementById('reqName').value = user.displayName || '';
+      document.getElementById('reqEmail').value = user.email || '';
+    } else {
+      applySignedOut.style.display = 'block';
+      applyRequestForm.style.display = 'none';
+      applyRequestSuccess.style.display = 'none';
+    }
+  });
+
+  applyRequestForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) return;
+    const intro = reqIntro.value.trim();
+    if (!intro){ reqIntro.focus(); return; }
+    const submitBtn = applyRequestForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try {
+      await db.collection('applications').add({
+        uid: user.uid,
+        name: user.displayName || '',
+        email: user.email || '',
+        tier: reqTier.value,
+        intro: intro,
+        link: document.getElementById('reqLink').value.trim() || null,
+        status: 'pending',
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      applyRequestForm.style.display = 'none';
+      applyRequestSuccess.style.display = 'block';
+      applyRequestSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      console.error('Could not submit application', err);
+      alert('Could not submit your application. Please try again.');
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
 
   /* ===== Events: load, seed, render ===== */
   const eventListContainer = document.getElementById('eventListContainer');
