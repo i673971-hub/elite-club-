@@ -274,23 +274,32 @@
   /* ===== Hero ===== */
   .hero{
     min-height:100vh;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
     text-align:center;
     color:var(--ivory);
-    padding:160px 6vw 100px;
+    padding:120px 0 100px;
     position:relative;
+    overflow:hidden;
   }
   .hero-sphere-wrap{
-    width:min(440px, 82vw); aspect-ratio:1/1;
-    margin:0 auto 30px;
     position:relative;
-    filter:drop-shadow(0 0 40px rgba(255,255,255,0.18)) drop-shadow(0 0 90px rgba(255,255,255,0.1));
+    left:50%;
+    transform:translateX(-50%);
+    width:100vw;
+    height:min(62vh, 640px);
+    min-height:380px;
+    margin-bottom:24px;
+    z-index:1;
+    background:none;
+    border:none;
+    box-shadow:none;
     animation:sealIn 1.4s cubic-bezier(.2,.8,.2,1) both;
     touch-action:pan-y;
     cursor:grab;
   }
   .hero-sphere-wrap:active{cursor:grabbing;}
   .hero-sphere-wrap canvas{width:100%; height:100%; display:block;}
+  .hero .eyebrow, .hero h1, .hero p.lede, .hero .cta-row{padding-left:6vw; padding-right:6vw;}
   .hero-sphere-mono{
     position:absolute; inset:0;
     display:flex; align-items:center; justify-content:center;
@@ -305,13 +314,15 @@
     from{opacity:0; transform:scale(0.85);}
     to{opacity:1; transform:scale(1);}
   }
-  .hero .eyebrow{margin-bottom:22px; animation:fadeUp 1s 0.2s both;}
+  .hero .eyebrow{margin-bottom:22px; animation:fadeUp 1s 0.2s both; position:relative; z-index:2;}
   .hero h1{
     font-size:clamp(2.6rem, 6vw, 5rem);
     font-weight:700;
     line-height:1.05;
     margin-bottom:22px;
     animation:fadeUp 0.9s 0.35s both;
+    position:relative; z-index:2;
+    text-shadow:0 2px 24px rgba(0,0,0,0.8);
   }
   .hero h1 em{font-style:normal; color:var(--brass-bright);}
   .hero p.lede{
@@ -321,11 +332,14 @@
     font-size:1.1rem;
     color:var(--ink-muted);
     animation:fadeUp 0.9s 0.5s both;
+    position:relative; z-index:2;
+    text-shadow:0 2px 16px rgba(0,0,0,0.7);
   }
   .hero .cta-row{
     margin-top:40px;
     display:flex; gap:18px; flex-wrap:wrap; justify-content:center;
     animation:fadeUp 0.9s 0.65s both;
+    position:relative; z-index:2;
   }
   @keyframes fadeUp{
     from{opacity:0; transform:translateY(16px);}
@@ -1247,7 +1261,7 @@
 </nav>
 
 <header class="hero">
-  <div class="hero-sphere-wrap" id="heroCreatureWrap" role="img" aria-label="A radiating grid of light, spikes extending outward from a dark center">
+  <div class="hero-sphere-wrap" id="heroCreatureWrap" role="img" aria-label="A slowly rotating wireframe cube">
     <canvas id="heroCreature"></canvas>
   </div>
   <span class="eyebrow">Est. 2026 &nbsp;&middot;&nbsp; A Society of Members</span>
@@ -1855,6 +1869,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
+if (typeof firebase === 'undefined') {
+  console.warn('Firebase SDK did not load (blocked or offline) — membership/auth features are disabled on this page load.');
+} else {
   const firebaseConfig = {
     apiKey: "AIzaSyBR33DMmeHyOWokT0eBtwAZGR9D0EhgjHg",
     authDomain: "elite-club-aaf15.firebaseapp.com",
@@ -2627,6 +2644,7 @@
       submitBtn.disabled = false;
     }
   });
+} // end firebase-available guard
 </script>
 
 <script>
@@ -2730,12 +2748,10 @@
 <script>
 (function(){
   /* ============================================================
-     Hero visual — radial spike-grid pattern, drawn with Canvas 2D.
-     A grid of points, each firing a dotted spike outward away from
-     the center; spike length grows with distance from center, so
-     the middle stays open and spikes lengthen toward the edges.
-     No external library needed (previously used Three.js via CDN;
-     this pattern is inherently 2D so that dependency is removed).
+     Hero visual — rotating wireframe cube, drawn with Canvas 2D.
+     8 vertices, manual rotation matrices + simple perspective
+     projection, no external library. Drag to spin; auto-rotates
+     slowly when idle.
      ============================================================ */
   const wrap = document.getElementById('heroCreatureWrap');
   const canvas = document.getElementById('heroCreature');
@@ -2754,20 +2770,47 @@
   ro.observe(wrap);
   resize();
 
-  const GRID = 26; // points per side
-  const DOTS_PER_SPIKE = 6;
+  // Cube vertices, centered at origin, half-extent 1
+  const verts = [
+    [-1,-1,-1], [ 1,-1,-1], [ 1, 1,-1], [-1, 1,-1],
+    [-1,-1, 1], [ 1,-1, 1], [ 1, 1, 1], [-1, 1, 1]
+  ];
+  const edges = [
+    [0,1],[1,2],[2,3],[3,0],
+    [4,5],[5,6],[6,7],[7,4],
+    [0,4],[1,5],[2,6],[3,7]
+  ];
 
-  let targetRot = 0, currentRot = 0;
-  let dragging = false, lastX = 0;
-  wrap.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; wrap.setPointerCapture(e.pointerId); });
+  let rotY = 0.6, rotX = -0.5;
+  let targetRotY = rotY, targetRotX = rotX;
+  let dragging = false, lastX = 0, lastY = 0;
+
+  wrap.addEventListener('pointerdown', (e) => {
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    wrap.setPointerCapture(e.pointerId);
+  });
   wrap.addEventListener('pointermove', (e) => {
     if (!dragging) return;
-    const dx = e.clientX - lastX; lastX = e.clientX;
-    targetRot += dx * 0.004;
-    if (reduceMotion){ currentRot = targetRot; drawFrame((performance.now()-start)/1000); }
+    const dx = e.clientX - lastX, dy = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    targetRotY += dx * 0.008;
+    targetRotX += dy * 0.008;
   });
   wrap.addEventListener('pointerup', () => { dragging = false; });
   wrap.addEventListener('pointercancel', () => { dragging = false; });
+
+  function rotate(v, ax, ay){
+    let [x, y, z] = v;
+    // rotate around X
+    let cosX = Math.cos(ax), sinX = Math.sin(ax);
+    let y1 = y * cosX - z * sinX;
+    let z1 = y * sinX + z * cosX;
+    // rotate around Y
+    let cosY = Math.cos(ay), sinY = Math.sin(ay);
+    let x2 = x * cosY + z1 * sinY;
+    let z2 = -x * sinY + z1 * cosY;
+    return [x2, y1, z2];
+  }
 
   const start = performance.now();
 
@@ -2778,57 +2821,65 @@
     ctx.fillRect(0, 0, w, h);
 
     const cx = w / 2, cy = h / 2;
-    const maxDist = Math.min(w, h) * 0.5;
-    const breathe = reduceMotion ? 1 : 1 + Math.sin(t * 0.35) * 0.06;
-    const cos = Math.cos(currentRot), sin = Math.sin(currentRot);
+    const scale = Math.min(w, h) * 0.24;
+    const focal = Math.min(w, h) * 1.6;
+    const pulse = reduceMotion ? 1 : 1 + Math.sin(t * 0.5) * 0.04;
 
-    const cellW = w / GRID, cellH = h / GRID;
-    ctx.lineWidth = Math.max(1, w / 900);
+    const projected = verts.map(v => {
+      const r = rotate(v, rotX, rotY);
+      const persp = focal / (focal + r[2] * scale);
+      return {
+        x: cx + r[0] * scale * pulse * persp,
+        y: cy + r[1] * scale * pulse * persp,
+        z: r[2],
+        depth: persp
+      };
+    });
 
-    for (let gy = 0; gy < GRID; gy++){
-      for (let gx = 0; gx < GRID; gx++){
-        const px = (gx + 0.5) * cellW;
-        const py = (gy + 0.5) * cellH;
-        // rotate point around center
-        const rx0 = px - cx, ry0 = py - cy;
-        const px2 = cx + rx0 * cos - ry0 * sin;
-        const py2 = cy + rx0 * sin + ry0 * cos;
+    // edges, brighter when nearer the viewer
+    ctx.lineWidth = Math.max(1, w / 700);
+    edges.forEach(([a, b]) => {
+      const pa = projected[a], pb = projected[b];
+      const avgZ = (pa.z + pb.z) / 2;
+      const alpha = 0.35 + (1 - (avgZ + 1) / 2) * 0.55;
+      ctx.strokeStyle = 'rgba(255,255,255,' + alpha.toFixed(2) + ')';
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.stroke();
+    });
 
-        const dx = px2 - cx, dy = py2 - cy;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        const norm = Math.min(1, dist / maxDist);
-        if (norm < 0.06) continue; // keep the very center open
-        const ux = dx / (dist || 1), uy = dy / (dist || 1);
-        const spikeLen = norm * norm * maxDist * 0.9 * breathe;
-        const alpha = Math.min(0.9, norm * 0.9);
-
-        for (let d = 1; d <= DOTS_PER_SPIKE; d++){
-          const f = d / DOTS_PER_SPIKE;
-          const dotX = px2 + ux * spikeLen * f;
-          const dotY = py2 + uy * spikeLen * f;
-          const dotAlpha = alpha * (0.35 + 0.65 * f);
-          const r = Math.max(0.6, (w / 1000) * (0.6 + f * 0.9));
-          ctx.beginPath();
-          ctx.arc(dotX, dotY, r, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(255,255,255,' + dotAlpha.toFixed(2) + ')';
-          ctx.fill();
-        }
-      }
-    }
+    // vertices, small glowing dots
+    projected.forEach(p => {
+      const alpha = 0.5 + (1 - (p.z + 1) / 2) * 0.5;
+      const r = Math.max(1.5, (w / 500) * p.depth);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + alpha.toFixed(2) + ')';
+      ctx.fill();
+    });
   }
 
   let rafId;
   function animate(now){
     const t = (now - start) / 1000;
-    if (!dragging) currentRot += (targetRot - currentRot) * 0.08;
-    else currentRot = targetRot;
-    drawFrame(t);
-    if (!reduceMotion || dragging){
-      rafId = requestAnimationFrame(animate);
+    if (!dragging && !reduceMotion){
+      targetRotY += 0.0025;
     }
+    rotY += (targetRotY - rotY) * 0.1;
+    rotX += (targetRotX - rotX) * 0.1;
+    drawFrame(t);
+    rafId = requestAnimationFrame(animate);
   }
-  if (reduceMotion){
+  if (reduceMotion && !dragging){
     drawFrame(0);
+    wrap.addEventListener('pointermove', () => {
+      if (dragging){
+        rotY += (targetRotY - rotY) * 0.4;
+        rotX += (targetRotX - rotX) * 0.4;
+        drawFrame(0);
+      }
+    });
   } else {
     rafId = requestAnimationFrame(animate);
   }
