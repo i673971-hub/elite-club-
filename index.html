@@ -434,6 +434,59 @@
     .section-tabs{padding:0 4vw;}
     .section-tab-btn{ flex:0 0 auto; width:calc((100vw - 8vw - 32px) / 4.3); min-width:60px; height:400px; padding:16px 12px; }
   }
+
+  /* ===== Tab detail panel — floating card with its own mini rotating cube,
+     shown when a section-tab box is clicked. Page does not scroll. ===== */
+  .tab-detail-panel{
+    position:fixed;
+    right:20px; bottom:20px; left:auto;
+    width:min(340px, calc(100vw - 40px));
+    z-index:80;
+    background:rgba(10,10,10,0.86);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:0 24px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.03);
+    padding:18px 20px 22px;
+    display:flex; flex-direction:column; gap:6px;
+    opacity:0; transform:translateY(16px) scale(0.98);
+    pointer-events:none;
+    transition:opacity 0.35s ease, transform 0.35s ease;
+  }
+  .tab-detail-panel.open{
+    opacity:1; transform:translateY(0) scale(1);
+    pointer-events:auto;
+  }
+  .tdp-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .tdp-cube-wrap{
+    width:64px; height:64px; flex:0 0 auto;
+  }
+  .tdp-cube-wrap canvas{ width:100%; height:100%; display:block; }
+  .tdp-close{
+    background:none; border:none; color:rgba(255,255,255,0.55);
+    font-family:'Jost', sans-serif; font-size:1.1rem; line-height:1;
+    cursor:pointer; padding:6px; margin:-6px -6px -6px 0;
+  }
+  .tdp-close:hover{ color:#fff; }
+  .tdp-num{
+    font-family:'Jost', sans-serif; font-size:0.68rem; letter-spacing:0.18em;
+    color:rgba(255,255,255,0.5); text-transform:uppercase; margin-top:2px;
+  }
+  .tdp-title{
+    font-family:'Cormorant Garamond', serif; font-weight:600; font-size:1.5rem;
+    color:#fff; margin-top:2px;
+  }
+  .tdp-desc{
+    font-family:'Lora', serif; font-size:0.92rem; line-height:1.55;
+    color:var(--ink-muted); margin-top:6px;
+  }
+  @media (max-width:520px){
+    .tab-detail-panel{ right:16px; left:16px; bottom:16px; width:auto; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .tab-detail-panel{ transition:none; }
+  }
   .section-head{
     max-width:640px; margin:0 auto 64px; text-align:center;
   }
@@ -1571,6 +1624,16 @@
 </section>
 
 <div class="section-tabs" id="sectionTabs" role="tablist" aria-label="Site sections"></div>
+
+<div class="tab-detail-panel" id="tabDetailPanel" role="dialog" aria-live="polite" aria-label="Section details">
+  <div class="tdp-top">
+    <div class="tdp-cube-wrap" id="tdpCubeWrap"><canvas id="tdpCube"></canvas></div>
+    <button type="button" class="tdp-close" id="tdpClose" aria-label="Close">&times;</button>
+  </div>
+  <div class="tdp-num" id="tdpNum">01</div>
+  <div class="tdp-title" id="tdpTitle">Title</div>
+  <div class="tdp-desc" id="tdpDesc">Description.</div>
+</div>
 
 <section class="about" id="about">
   <div class="section-head">
@@ -3073,21 +3136,21 @@ if (typeof firebase === 'undefined') {
   // ===== Section tabs: jump-to nav — all sections stay stacked, scroll to discover =====
   (function(){
     const tabDefs = [
-      { id: 'services', label: 'What We Do' },
-      { id: 'consult', label: 'Consultation' },
-      { id: 'about', label: 'Charter' },
-      { id: 'forwhom', label: 'For Whom' },
-      { id: 'privileges', label: 'Privileges' },
-      { id: 'events', label: 'Calendar' },
-      { id: 'gallery', label: "Members' Hall" },
-      { id: 'testimonials', label: 'Testimonials' },
-      { id: 'intelligence', label: 'Intelligence' },
-      { id: 'members', label: 'Explore' },
-      { id: 'partners', label: 'Partners' },
-      { id: 'pricing', label: 'Membership' },
-      { id: 'request-membership', label: 'Apply' },
-      { id: 'faq', label: 'FAQ' },
-      { id: 'donate', label: 'Contribute' }
+      { id: 'services', label: 'What We Do', desc: 'Automated workflows, AI integration into your existing tools, and custom AI agents built to carry out real tasks end to end.' },
+      { id: 'consult', label: 'Consultation', desc: 'Tell us what you\u2019re trying to automate and we\u2019ll walk you through how AI can do it \u2014 a free, no-obligation conversation.' },
+      { id: 'about', label: 'Charter', desc: 'Fellowship, standards, occasion, and continuity \u2014 the four principles the Club is built on.' },
+      { id: 'forwhom', label: 'For Whom', desc: 'Selective by design: builders, stewards, and quiet achievers who take their craft seriously.' },
+      { id: 'privileges', label: 'Privileges', desc: 'Private assemblies, curated introductions, priority reservations, and access to the Club\u2019s archive.' },
+      { id: 'events', label: 'Calendar', desc: 'Quarterly assemblies and smaller evening gatherings \u2014 real reasons to meet, on the books.' },
+      { id: 'gallery', label: "Members' Hall", desc: 'Moments from assemblies, receptions, and dinners, kept for members past and present.' },
+      { id: 'testimonials', label: 'Testimonials', desc: 'What current members \u2014 Executive, Premier, and Founding \u2014 say about belonging to the Club.' },
+      { id: 'intelligence', label: 'Intelligence', desc: 'Live pricing, analyst estimates, financials, peer analysis, and a daily digest \u2014 seven readings on where you stand.' },
+      { id: 'members', label: 'Explore', desc: 'Sign in to explore the members area \u2014 free to join, with more reserved for paid tiers.' },
+      { id: 'partners', label: 'Partners', desc: 'Publishing, architecture, finance, medicine, law, design, technology \u2014 where our members work.' },
+      { id: 'pricing', label: 'Membership', desc: 'Executive, Premier, Founding Member, and Exclusive \u2014 choose a tier to begin your application.' },
+      { id: 'request-membership', label: 'Apply', desc: 'Applications are reviewed personally \u2014 sign in, choose a tier, and tell us why you\u2019d like to join.' },
+      { id: 'faq', label: 'FAQ', desc: 'How membership is reviewed, whether you can attend before joining, and other questions before you apply.' },
+      { id: 'donate', label: 'Contribute', desc: 'Support the Club via UPI or crypto \u2014 every contribution helps fund gatherings and the hall.' }
     ];
     const tabBar = document.getElementById('sectionTabs');
     if (!tabBar) return;
@@ -3128,13 +3191,18 @@ if (typeof firebase === 'undefined') {
       label.textContent = t.label;
       btn.appendChild(num);
       btn.appendChild(label);
-      btn.addEventListener('click', () => activate(t.id, true));
+      // Clicking a box shows its details on the floating cube panel —
+      // it does not scroll the page or jump to the section.
+      btn.addEventListener('click', () => {
+        setActiveTab(t.id);
+        if (window.showTabDetail) window.showTabDetail(t, i);
+      });
       tabBar.appendChild(btn);
     });
 
     // Any existing link on the page that points to one of these sections
     // (nav links, hero CTAs, pricing "Apply for This Tier" buttons, etc.)
-    // scrolls straight to it now — nothing is hidden anymore.
+    // still scrolls straight to it — only the numbered boxes were changed.
     document.querySelectorAll('a[href^="#"]').forEach(a => {
       const id = a.getAttribute('href').slice(1);
       if (validIds.has(id)){
@@ -3387,6 +3455,141 @@ if (typeof firebase === 'undefined') {
     rafId = requestAnimationFrame(animate);
   }
   window.addEventListener('resize', () => drawFrame((performance.now()-start)/1000));
+})();
+</script>
+
+<script>
+(function(){
+  /* ============================================================
+     Tab detail panel — its own small rotating wireframe cube
+     (same edges/verts as the hero cube, simpler auto-rotate-only
+     version) plus the num/title/description for whichever
+     numbered box was last clicked. Page never scrolls for this.
+     ============================================================ */
+  const panel = document.getElementById('tabDetailPanel');
+  const cubeWrap = document.getElementById('tdpCubeWrap');
+  const canvas = document.getElementById('tdpCube');
+  const closeBtn = document.getElementById('tdpClose');
+  const numEl = document.getElementById('tdpNum');
+  const titleEl = document.getElementById('tdpTitle');
+  const descEl = document.getElementById('tdpDesc');
+  if (!panel || !canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize(){
+    const w = cubeWrap.clientWidth, h = cubeWrap.clientHeight;
+    if (!w || !h) return;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+  }
+  new ResizeObserver(resize).observe(cubeWrap);
+  resize();
+
+  const verts = [
+    [-1,-1,-1], [ 1,-1,-1], [ 1, 1,-1], [-1, 1,-1],
+    [-1,-1, 1], [ 1,-1, 1], [ 1, 1, 1], [-1, 1, 1]
+  ];
+  const edges = [
+    [0,1],[1,2],[2,3],[3,0],
+    [4,5],[5,6],[6,7],[7,4],
+    [0,4],[1,5],[2,6],[3,7]
+  ];
+
+  let rotY = 0.6, rotX = -0.5;
+  let spin = 0; // extra burst of rotation speed, eased back down after each open
+
+  function rotate(v, ax, ay){
+    let [x, y, z] = v;
+    let cosX = Math.cos(ax), sinX = Math.sin(ax);
+    let y1 = y * cosX - z * sinX;
+    let z1 = y * sinX + z * cosX;
+    let cosY = Math.cos(ay), sinY = Math.sin(ay);
+    let x2 = x * cosY + z1 * sinY;
+    let z2 = -x * sinY + z1 * cosY;
+    return [x2, y1, z2];
+  }
+
+  function drawFrame(){
+    const w = canvas.width, h = canvas.height;
+    if (!w || !h) return;
+    ctx.clearRect(0, 0, w, h);
+    const cx = w / 2, cy = h / 2;
+    const scale = Math.min(w, h) * 0.24;
+    const focal = Math.min(w, h) * 1.6;
+
+    const projected = verts.map(v => {
+      const r = rotate(v, rotX, rotY);
+      const persp = focal / (focal + r[2] * scale);
+      return { x: cx + r[0] * scale * persp, y: cy + r[1] * scale * persp, z: r[2] };
+    });
+
+    ctx.lineWidth = Math.max(1, w / 220);
+    edges.forEach(([a, b]) => {
+      const pa = projected[a], pb = projected[b];
+      const avgZ = (pa.z + pb.z) / 2;
+      const alpha = 0.35 + (1 - (avgZ + 1) / 2) * 0.55;
+      ctx.strokeStyle = 'rgba(255,255,255,' + alpha.toFixed(2) + ')';
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.stroke();
+    });
+    projected.forEach(p => {
+      const alpha = 0.5 + (1 - (p.z + 1) / 2) * 0.5;
+      const r = Math.max(1.2, w / 160);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + alpha.toFixed(2) + ')';
+      ctx.fill();
+    });
+  }
+
+  let rafId = null;
+  function animate(){
+    if (!reduceMotion){
+      rotY += 0.01 + spin;
+      rotX += (-0.4 - rotX) * 0.02;
+      spin *= 0.94; // burst decays back to a slow idle spin
+    }
+    drawFrame();
+    rafId = requestAnimationFrame(animate);
+  }
+
+  function startLoop(){
+    if (rafId === null) rafId = requestAnimationFrame(animate);
+  }
+  function stopLoop(){
+    if (rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  window.showTabDetail = function(tabDef, index){
+    numEl.textContent = String(index + 1).padStart(2, '0');
+    titleEl.textContent = tabDef.label;
+    descEl.textContent = tabDef.desc || '';
+    panel.classList.add('open');
+    spin = reduceMotion ? 0 : 0.12; // give the cube a little kick on each click
+    resize();
+    startLoop();
+  };
+
+  function closePanel(){
+    panel.classList.remove('open');
+    stopLoop();
+  }
+  closeBtn.addEventListener('click', closePanel);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel.classList.contains('open')) closePanel();
+  });
+  document.addEventListener('click', (e) => {
+    if (!panel.classList.contains('open')) return;
+    if (panel.contains(e.target) || e.target.closest('.section-tab-btn')) return;
+    closePanel();
+  });
+
+  if (reduceMotion) drawFrame();
 })();
 </script>
 
