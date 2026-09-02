@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elite Club Intelligence — AI Automation & Agents</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            club: {
+              black: '#0A0A0B',
+              ivory: '#F5F2EB',
+              gold: '#C9A86C',
+              steel: '#7A9BB5',
+            }
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #0A0A0B; color: #F5F2EB; }
+    .gold-border { border-color: rgba(201, 168, 108, 0.18); }
+    .steel-border { border-color: rgba(122, 155, 181, 0.25); }
+    .card-hover { transition: all 0.35s ease; }
+    .card-hover:hover { transform: translateY(-4px); border-color: rgba(122, 155, 181, 0.45); }
+  </style>
+</head>
+<body class="font-sans antialiased">
+
+  <!-- Navigation (same as Club, with Intelligence active) -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-club-black/80 backdrop-blur-md border-b gold-border">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="assets/logo.jpg" alt="Elite Club" class="w-9 h-9 rounded-full object-cover object-top border border-club-gold/40">
+        <span class="font-serif text-lg tracking-wide">Elite Club</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm text-club-ivory/70">
+        <a href="index.html#charter" class="hover:text-club-gold transition">Charter</a>
+        <a href="index.html#membership" class="hover:text-club-gold transition">Membership</a>
+        <a href="index.html#calendar" class="hover:text-club-gold transition">Calendar</a>
+        <a href="index.html#hall" class="hover:text-club-gold transition">Members’ Hall</a>
+        <a href="#" class="text-club-steel">Intelligence</a>
+      </nav>
+      <a href="index.html#apply" class="hidden md:inline-flex px-5 py-2 text-sm border border-club-gold/50 text-club-gold rounded-full hover:bg-club-gold/10 transition">
+        Request Membership
+      </a>
+      <button id="mobileMenuBtn" class="md:hidden text-club-ivory/80" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
+    </div>
+    <!-- Mobile menu panel -->
+    <div id="mobileMenu" class="hidden md:hidden border-t gold-border bg-club-black/95 backdrop-blur-md">
+      <nav class="flex flex-col px-6 py-4 gap-4 text-sm text-club-ivory/80">
+        <a href="index.html#charter" class="hover:text-club-gold transition">Charter</a>
+        <a href="index.html#membership" class="hover:text-club-gold transition">Membership</a>
+        <a href="index.html#calendar" class="hover:text-club-gold transition">Calendar</a>
+        <a href="index.html#hall" class="hover:text-club-gold transition">Members' Hall</a>
+        <a href="#" class="text-club-steel">Intelligence</a>
+        <a href="index.html#apply" class="mt-2 px-5 py-2 text-center border border-club-gold/50 text-club-gold rounded-full hover:bg-club-gold/10 transition">Request Membership</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="pt-32 pb-24 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-club-steel/80 text-sm tracking-[0.25em] uppercase mb-6">Elite Club Intelligence</p>
+      <h1 class="font-serif text-4xl md:text-6xl leading-tight mb-8">
+        Clear. Precise.<br>
+        <span class="text-club-steel">Automated.</span>
+      </h1>
+      <p class="text-lg md:text-xl text-club-ivory/70 max-w-2xl mx-auto mb-12 leading-relaxed">
+        We design automation that brings clarity, precision, and efficiency to the way your company operates — with the same standards of discretion that define the Club.
+      </p>
+      <a href="#consult" class="inline-flex px-8 py-3.5 bg-club-steel text-club-black font-medium rounded-full hover:bg-club-steel/90 transition">
+        Request a Consultation
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats / Social proof -->
+  <section class="py-12 px-6 border-y gold-border">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-center items-center gap-12 md:gap-24 text-center">
+      <div>
+        <p class="text-3xl font-medium text-club-ivory">100+</p>
+        <p class="text-sm text-club-ivory/50 mt-1">Businesses automated</p>
+      </div>
+      <div>
+        <p class="text-3xl font-medium text-club-ivory">Members first</p>
+        <p class="text-sm text-club-ivory/50 mt-1">Preferred access & pricing</p>
+      </div>
+      <div>
+        <p class="text-3xl font-medium text-club-ivory">End-to-end</p>
+        <p class="text-sm text-club-ivory/50 mt-1">From workflow to agent</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="py-32 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-20">
+        <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">What We Do</p>
+        <h2 class="font-serif text-4xl md:text-5xl">Our Services</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- AI Automation -->
+        <div class="p-8 border steel-border rounded-2xl card-hover">
+          <div class="w-12 h-12 rounded-full border border-club-steel/30 flex items-center justify-center text-club-steel mb-6 text-sm font-medium">01</div>
+          <h3 class="font-serif text-2xl mb-4">AI Automation</h3>
+          <p class="text-club-ivory/60 leading-relaxed mb-6">
+            We build automated workflows that take repetitive work off your plate, so your team can focus on what actually moves the business.
+          </p>
+          <ul class="space-y-2 text-sm text-club-ivory/50">
+            <li>• Process mapping & redesign</li>
+            <li>• Custom workflow engines</li>
+            <li>• Monitoring & iteration</li>
+          </ul>
+        </div>
+
+        <!-- AI Integration -->
+        <div class="p-8 border steel-border rounded-2xl card-hover">
+          <div class="w-12 h-12 rounded-full border border-club-steel/30 flex items-center justify-center text-club-steel mb-6 text-sm font-medium">02</div>
+          <h3 class="font-serif text-2xl mb-4">AI Integration</h3>
+          <p class="text-club-ivory/60 leading-relaxed mb-6">
+            We connect AI directly into the tools you already use, so it works inside your existing operations — not around them.
+          </p>
+          <ul class="space-y-2 text-sm text-club-ivory/50">
+            <li>• CRM, ERP & internal tools</li>
+            <li>• Data pipelines</li>
+            <li>• Secure API architecture</li>
+          </ul>
+        </div>
+
+        <!-- AI Agent Development -->
+        <div class="p-8 border steel-border rounded-2xl card-hover">
+          <div class="w-12 h-12 rounded-full border border-club-steel/30 flex items-center justify-center text-club-steel mb-6 text-sm font-medium">03</div>
+          <h3 class="font-serif text-2xl mb-4">AI Agent Development</h3>
+          <p class="text-club-ivory/60 leading-relaxed mb-6">
+            We design and build custom AI agents that carry out real tasks on your behalf, end to end.
+          </p>
+          <ul class="space-y-2 text-sm text-club-ivory/50">
+            <li>• Task-specific agents</li>
+            <li>• Multi-step reasoning</li>
+            <li>• Human-in-the-loop controls</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Approach -->
+  <section class="py-24 px-6 border-t gold-border">
+    <div class="max-w-5xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div>
+          <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">How We Work</p>
+          <h2 class="font-serif text-4xl mb-6">Precision over volume</h2>
+          <p class="text-club-ivory/70 leading-relaxed text-lg mb-8">
+            We take on a limited number of engagements. Every system is designed with clarity, security, and long-term maintainability in mind — never as a black box.
+          </p>
+          <ul class="space-y-4 text-club-ivory/60">
+            <li class="flex gap-3"><span class="text-club-steel">→</span> Deep discovery before any build</li>
+            <li class="flex gap-3"><span class="text-club-steel">→</span> Transparent architecture decisions</li>
+            <li class="flex gap-3"><span class="text-club-steel">→</span> Members receive priority scheduling</li>
+          </ul>
+        </div>
+        <div class="border steel-border rounded-2xl p-10 bg-club-ivory/[0.02]">
+          <p class="font-serif text-xl italic text-club-ivory/80 leading-relaxed mb-6">
+            “We do not sell tools. We install capability.”
+          </p>
+          <p class="text-sm text-club-steel/70">— Elite Club Intelligence</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Consultation CTA -->
+  <section id="consult" class="py-32 px-6">
+    <div class="max-w-2xl mx-auto text-center">
+      <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">Next Step</p>
+      <h2 class="font-serif text-4xl mb-6">Request a Consultation</h2>
+      <p class="text-club-ivory/60 mb-12 leading-relaxed">
+        Tell us briefly about the processes you want to improve. We review every request personally and respond within a few days.
+      </p>
+      <div class="inline-flex flex-col items-center gap-4 p-8 border steel-border rounded-2xl">
+        <p class="text-club-steel/80 text-sm tracking-widest uppercase">Scan to Chat on WhatsApp</p>
+        <img src="assets/whatsapp-qr.jpg" alt="Scan to message us on WhatsApp for a free consultation" class="w-44 h-44 rounded-xl">
+      </div>
+      <p class="text-sm text-club-ivory/40 mt-8">Members of Elite Club receive preferred access and terms.</p>
+    </div>
+  </section>
+
+  <!-- Back to Club -->
+  <section class="py-16 px-6 border-t gold-border">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-club-ivory/50 mb-6">Intelligence is an extension of the Club.</p>
+      <a href="index.html" class="inline-flex items-center gap-2 text-club-gold hover:text-club-gold/80 transition">
+        ← Return to Elite Club
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-16 px-6 border-t gold-border">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+      <div class="flex items-center gap-3">
+        <img src="assets/logo.jpg" alt="Elite Club" class="w-8 h-8 rounded-full object-cover object-top border border-club-gold/40">
+        <span class="font-serif">Elite Club</span>
+      </div>
+      <p class="text-sm text-club-ivory/40">Intelligence · Est. 2026</p>
+      <div class="flex gap-6 text-sm text-club-ivory/50">
+        <a href="index.html" class="hover:text-club-gold transition">Club Home</a>
+        <a href="index.html#apply" class="hover:text-club-gold transition">Membership</a>
+      </div>
+    </div>
+  </footer>
+  <script>
+    (function(){
+      const btn = document.getElementById('mobileMenuBtn');
+      const menu = document.getElementById('mobileMenu');
+      if (!btn || !menu) return;
+      function closeMenu(){
+        menu.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+      function openMenu(){
+        menu.classList.remove('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+      btn.addEventListener('click', () => {
+        if (menu.classList.contains('hidden')) openMenu(); else closeMenu();
+      });
+      menu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+  </script>
+
+</body>
+</html>
