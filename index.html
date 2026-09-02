@@ -143,9 +143,20 @@
     #ecChatForm button{ background:var(--brass); color:var(--dark-text); border:none; padding:0 20px; font-family:'Inter', sans-serif; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; }
     #ecChatForm button:hover{background:var(--brass-bright);}
     #ecChatForm button:disabled{opacity:0.5; cursor:default;}
+
+    /* ===== Global hero-cube background (fixed behind entire page) ===== */
+    #heroBgWrap{
+      position:fixed; inset:0; z-index:-1;
+      pointer-events:none;
+    }
+    #heroBgWrap canvas{ width:100%; height:100%; display:block; }
   </style>
 </head>
 <body class="font-sans antialiased">
+
+  <div id="heroBgWrap" aria-hidden="true">
+    <canvas id="heroCreature"></canvas>
+  </div>
 
   <!-- Navigation -->
   <header class="fixed top-0 inset-x-0 z-50 bg-club-black/80 backdrop-blur-md border-b gold-border">
@@ -1646,6 +1657,108 @@ if (typeof firebase === 'undefined') {
         setTimeout(() => addMsg(getReply(text), 'bot'), 350);
       });
     })();
+  </script>
+  <script>
+  (function(){
+    /* ============================================================
+       Global background — rotating wireframe cube, drawn with Canvas 2D,
+       fixed behind the entire page (not just the hero). Auto-rotates
+       continuously; dimmed so page content stays readable on top of it.
+       ============================================================ */
+    const wrap = document.getElementById('heroBgWrap');
+    const canvas = document.getElementById('heroCreature');
+    if (!wrap || !canvas) return;
+    const ctx = canvas.getContext('2d');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize(){
+      const w = window.innerWidth, h = window.innerHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const verts = [
+      [-1,-1,-1], [ 1,-1,-1], [ 1, 1,-1], [-1, 1,-1],
+      [-1,-1, 1], [ 1,-1, 1], [ 1, 1, 1], [-1, 1, 1]
+    ];
+    const edges = [
+      [0,1],[1,2],[2,3],[3,0],
+      [4,5],[5,6],[6,7],[7,4],
+      [0,4],[1,5],[2,6],[3,7]
+    ];
+
+    let rotY = 0.6, rotX = -0.5;
+
+    function rotate(v, ax, ay){
+      let [x, y, z] = v;
+      let cosX = Math.cos(ax), sinX = Math.sin(ax);
+      let y1 = y * cosX - z * sinX;
+      let z1 = y * sinX + z * cosX;
+      let cosY = Math.cos(ay), sinY = Math.sin(ay);
+      let x2 = x * cosY + z1 * sinY;
+      let z2 = -x * sinY + z1 * cosY;
+      return [x2, y1, z2];
+    }
+
+    const start = performance.now();
+
+    function drawFrame(t){
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const cx = w / 2, cy = h / 2;
+      const scale = Math.min(w, h) * 0.32;
+      const focal = Math.min(w, h) * 1.6;
+      const pulse = reduceMotion ? 1 : 1 + Math.sin(t * 0.5) * 0.04;
+
+      const projected = verts.map(v => {
+        const r = rotate(v, rotX, rotY);
+        const persp = focal / (focal + r[2] * scale);
+        return {
+          x: cx + r[0] * scale * pulse * persp,
+          y: cy + r[1] * scale * pulse * persp,
+          z: r[2],
+          depth: persp
+        };
+      });
+
+      ctx.lineWidth = Math.max(1, w / 900);
+      edges.forEach(([a, b]) => {
+        const pa = projected[a], pb = projected[b];
+        const avgZ = (pa.z + pb.z) / 2;
+        const alpha = (0.12 + (1 - (avgZ + 1) / 2) * 0.22);
+        ctx.strokeStyle = 'rgba(201,168,108,' + alpha.toFixed(2) + ')';
+        ctx.beginPath();
+        ctx.moveTo(pa.x, pa.y);
+        ctx.lineTo(pb.x, pb.y);
+        ctx.stroke();
+      });
+
+      projected.forEach(p => {
+        const alpha = 0.15 + (1 - (p.z + 1) / 2) * 0.2;
+        const r = Math.max(1.2, (w / 600) * p.depth);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(201,168,108,' + alpha.toFixed(2) + ')';
+        ctx.fill();
+      });
+    }
+
+    function animate(now){
+      const t = (now - start) / 1000;
+      if (!reduceMotion) rotY += 0.0018;
+      drawFrame(t);
+      if (!reduceMotion) requestAnimationFrame(animate);
+    }
+    if (reduceMotion){
+      drawFrame(0);
+    } else {
+      requestAnimationFrame(animate);
+    }
+  })();
   </script>
 
 </body>
