@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Elite Club — A Society of Members</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -162,7 +163,7 @@
   <header class="fixed top-0 inset-x-0 z-50 bg-club-black/80 backdrop-blur-md border-b gold-border">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
       <a href="#" class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full border border-club-gold/40 flex items-center justify-center text-club-gold text-sm font-medium tracking-widest">EC</div>
+        <img src="assets/logo.jpg" alt="Elite Club" class="w-9 h-9 rounded-full object-cover object-top border border-club-gold/40">
         <span class="font-serif text-lg tracking-wide">Elite Club</span>
       </a>
       <nav class="hidden md:flex items-center gap-8 text-sm text-club-ivory/70">
@@ -518,6 +519,12 @@
       </p>
     </div>
 
+    <div class="max-w-xs mx-auto mb-16 flex flex-col items-center gap-3 p-6 border gold-border rounded-2xl">
+      <p class="text-club-gold/80 text-xs tracking-widest uppercase">Prefer to Message Us Directly?</p>
+      <img src="assets/whatsapp-qr.jpg" alt="Scan to message us on WhatsApp for a free consultation" class="w-36 h-36 rounded-xl">
+      <p class="text-club-ivory/40 text-xs">Scan to chat with us on WhatsApp</p>
+    </div>
+
     <div id="applyChooseTier" style="max-width:520px; margin:0 auto; text-align:center;">
       <p style="color:var(--ink-muted); margin-bottom:22px;">Choose a membership tier to begin your application.</p>
       <a href="#membership" class="inline-flex px-8 py-3.5 bg-club-gold text-club-black font-medium rounded-full hover:bg-club-gold/90 transition">View Membership Tiers</a>
@@ -645,7 +652,7 @@
   <footer class="py-16 px-6 border-t gold-border">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full border border-club-gold/40 flex items-center justify-center text-club-gold text-xs">EC</div>
+        <img src="assets/logo.jpg" alt="Elite Club" class="w-8 h-8 rounded-full object-cover object-top border border-club-gold/40">
         <span class="font-serif">Elite Club</span>
       </div>
       <p class="text-sm text-club-ivory/40">Est. 2026 · A Society of Members</p>
