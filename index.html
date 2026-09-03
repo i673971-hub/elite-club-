@@ -52,6 +52,7 @@
     .event-info{ flex:1; min-width:0; }
     .event-info h3{font-size:1.2rem; margin-bottom:4px; font-family:'Playfair Display', serif;}
     .event-info span{ font-family:'Inter', sans-serif; font-size:0.78rem; color:var(--ink-muted); letter-spacing:0.02em; }
+    .event-desc{ font-family:'Inter', sans-serif; font-size:0.8rem; color:var(--ink-muted); margin-top:8px; line-height:1.5; }
     .event-row .btn{padding:10px 20px; font-size:0.68rem; border-radius:999px; text-decoration:none; display:inline-block;}
     @media (max-width:600px){ .event-row{flex-wrap:wrap; gap:12px; text-align:left;} }
 
@@ -553,6 +554,11 @@
             <div class="luma-row luma-row-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>
               <input id="evLocation" type="text" placeholder="Choose Location" required>
+            </div>
+
+            <div class="luma-row luma-row-icon" style="align-items:flex-start;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="margin-top:2px;"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+              <textarea id="evDescription" placeholder="Add Description (optional)" rows="3" style="background:transparent; border:none; outline:none; width:100%; color:var(--ivory); font-family:'Inter', sans-serif; font-size:1rem; resize:vertical;"></textarea>
             </div>
 
             <div class="luma-section-label">Ticketing</div>
@@ -1057,7 +1063,9 @@ if (typeof firebase === 'undefined') {
         html += '<div class="event-row">' +
           '<div class="event-date">' + month + '<span class="day">' + day + '</span></div>' +
           (d.imageUrl ? '<img src="' + d.imageUrl + '" alt="" class="event-thumb">' : '') +
-          '<div class="event-info"><h3>' + (d.title || 'Untitled Event') + '</h3><span>' + display + '</span></div>' +
+          '<div class="event-info"><h3>' + (d.title || 'Untitled Event') + '</h3><span>' + display + '</span>' +
+          (d.description ? '<p class="event-desc">' + d.description.replace(/</g, '&lt;') + '</p>' : '') +
+          '</div>' +
           '<div style="display:flex; align-items:center;">' +
           '<button class="btn btn-ghost reserve-btn" data-event-id="' + doc.id + '" data-event="' + (d.title || '').replace(/"/g, '&quot;') + '" data-date="' + display + '" data-price="' + price + '">' + btnLabel + '</button>' +
           deleteBtnHtml +
@@ -1127,6 +1135,7 @@ if (typeof firebase === 'undefined') {
     const sortDate = document.getElementById('evDate').value;
     const time = document.getElementById('evTime').value;
     const location = document.getElementById('evLocation').value.trim();
+    const description = document.getElementById('evDescription').value.trim();
     const price = Number(document.getElementById('evPrice').value) || 0;
     const imageUrl = evPhotoUrlInput.value.trim();
     if (!title || !sortDate || !time || !location) return;
@@ -1141,6 +1150,7 @@ if (typeof firebase === 'undefined') {
         createdBy: auth.currentUser ? auth.currentUser.email : null
       };
       if (imageUrl) eventDoc.imageUrl = imageUrl;
+      if (description) eventDoc.description = description;
       await db.collection('events').add(eventDoc);
       createEventForm.reset();
       resetEventPhotoPicker();
