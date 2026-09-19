@@ -206,6 +206,81 @@
       pointer-events:none;
     }
     #heroBgWrap canvas{ width:100%; height:100%; display:block; }
+    /* ===== Event card override — forced explicit sizing, placed last so it
+       always wins the cascade regardless of anything else on the page ===== */
+    .event-list, .event-list *{ box-sizing:border-box; }
+    .event-row{
+      display:flex !important; flex-direction:row !important; flex-wrap:wrap !important;
+      align-items:center !important; width:100% !important; gap:18px !important;
+      padding:24px 26px !important; text-align:left !important;
+    }
+    .event-date{
+      width:56px !important; flex:0 0 56px !important; font-size:0.72rem !important;
+    }
+    .event-thumb{
+      width:52px !important; height:52px !important; flex:0 0 52px !important;
+    }
+    .event-info{
+      flex:1 1 200px !important; min-width:150px !important; max-width:100% !important;
+    }
+    .event-info h3{
+      font-size:1.15rem !important; line-height:1.35 !important; font-weight:600 !important;
+      white-space:normal !important; overflow-wrap:break-word !important; word-break:normal !important;
+      max-width:100% !important; margin:0 0 4px 0 !important;
+    }
+    .event-info span{
+      font-size:0.78rem !important; white-space:normal !important;
+    }
+    .event-desc{
+      font-size:0.82rem !important; line-height:1.55 !important; white-space:normal !important;
+      overflow-wrap:break-word !important; word-break:normal !important; max-width:100% !important;
+      margin-top:8px !important;
+    }
+    .event-row .btn{ flex:0 0 auto !important; }
+
+    /* ===== Bridging transitions: mobile menu, overlays, member-area states ===== */
+    .ui-collapse{
+      max-height:0; opacity:0; overflow:hidden;
+      transition:max-height 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.28s ease;
+    }
+    .ui-collapse-open{ max-height:600px; opacity:1; }
+
+    .ui-fade{ transition:opacity 0.3s ease, transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+    .ui-fade-enter{ opacity:0; transform:translateY(8px); }
+
+    #voucherOverlay, #claimOverlay, #cryptoOverlay, #eventPayOverlay, #ecChatPanel{
+      transition:opacity 0.28s ease, visibility 0.28s ease;
+    }
+    #voucherOverlay, #claimOverlay, #cryptoOverlay, #eventPayOverlay{
+      display:flex !important; opacity:0; visibility:hidden; pointer-events:none;
+    }
+    #voucherOverlay.open, #claimOverlay.open, #cryptoOverlay.open, #eventPayOverlay.open{
+      opacity:1; visibility:visible; pointer-events:auto;
+    }
+    #voucherOverlay .voucher-card, #claimOverlay .voucher-card, #cryptoOverlay .voucher-card, #eventPayOverlay .voucher-card{
+      transition:transform 0.32s cubic-bezier(0.34,1.56,0.64,1), opacity 0.28s ease;
+      transform:scale(0.94) translateY(10px); opacity:0;
+    }
+    #voucherOverlay.open .voucher-card, #claimOverlay.open .voucher-card, #cryptoOverlay.open .voucher-card, #eventPayOverlay.open .voucher-card{
+      transform:scale(1) translateY(0); opacity:1;
+    }
+    #ecChatPanel{ display:flex !important; opacity:0; visibility:hidden; pointer-events:none; transform:translateY(10px) scale(0.97); }
+    #ecChatPanel.open{ opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0) scale(1); }
+    #ecChatPanel{ transition:opacity 0.26s ease, visibility 0.26s ease, transform 0.26s cubic-bezier(0.34,1.56,0.64,1); }
+
+    @media (prefers-reduced-motion: reduce){
+      .ui-collapse, .ui-fade, #voucherOverlay, #claimOverlay, #cryptoOverlay, #eventPayOverlay, #ecChatPanel,
+      #voucherOverlay .voucher-card, #claimOverlay .voucher-card, #cryptoOverlay .voucher-card, #eventPayOverlay .voucher-card{
+        transition:none !important;
+      }
+    }
+
+    /* Native cross-document page transition between index.html and intelligence.html */
+    @view-transition{ navigation: auto; }
+    ::view-transition-old(root){ animation: ui-fade-out 0.22s ease both; }
+    ::view-transition-new(root){ animation: ui-fade-in 0.32s ease both; }
+    @keyframes ui-fade-out{ to{ opacity:0; } }
+    @keyframes ui-fade-in{ from{ opacity:0; transform:translateY(6px); } }
   </style>
 </head>
 <body class="font-sans antialiased">
@@ -236,7 +311,7 @@
       <button id="mobileMenuBtn" class="md:hidden text-club-ivory/80" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
     </div>
     <!-- Mobile menu panel -->
-    <div id="mobileMenu" class="hidden md:hidden border-t gold-border bg-club-black/95 backdrop-blur-md">
+    <div id="mobileMenu" class="md:hidden border-t gold-border bg-club-black/95 backdrop-blur-md ui-collapse">
       <nav class="flex flex-col px-6 py-4 gap-4 text-sm text-club-ivory/80">
         <a href="#charter" class="hover:text-club-gold transition">Charter</a>
         <a href="#membership" class="hover:text-club-gold transition">Membership</a>
@@ -840,15 +915,15 @@
       const menu = document.getElementById('mobileMenu');
       if (!btn || !menu) return;
       function closeMenu(){
-        menu.classList.add('hidden');
+        menu.classList.remove('ui-collapse-open');
         btn.setAttribute('aria-expanded', 'false');
       }
       function openMenu(){
-        menu.classList.remove('hidden');
+        menu.classList.add('ui-collapse-open');
         btn.setAttribute('aria-expanded', 'true');
       }
       btn.addEventListener('click', () => {
-        if (menu.classList.contains('hidden')) openMenu(); else closeMenu();
+        if (menu.classList.contains('ui-collapse-open')) closeMenu(); else openMenu();
       });
       menu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
       document.addEventListener('keydown', (e) => {
@@ -873,6 +948,27 @@ if (typeof firebase === 'undefined') {
   const auth = firebase.auth();
   const db = firebase.firestore();
   let isAdminUser = false;
+
+  // ===== Small fade-in helpers for smoother state transitions =====
+  const reduceMotionForUI = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function fadeIn(el, display){
+    if (!el) return;
+    display = display || 'block';
+    if (reduceMotionForUI){ el.style.display = display; return; }
+    el.classList.add('ui-fade', 'ui-fade-enter');
+    el.style.display = display;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      el.classList.remove('ui-fade-enter');
+    }));
+  }
+  function fadeOut(el){
+    if (!el) return;
+    el.style.display = 'none';
+  }
+  function fadeSwap(hideEl, showEl, showDisplay){
+    fadeOut(hideEl);
+    fadeIn(showEl, showDisplay);
+  }
 
   const signInBtn = document.getElementById('googleSignInBtn');
   const signOutBtn = document.getElementById('signOutBtn');
@@ -1534,8 +1630,7 @@ if (typeof firebase === 'undefined') {
 
   auth.onAuthStateChanged(async (user) => {
     if (user) {
-      signedOutView.style.display = 'none';
-      signedInView.style.display = 'block';
+      fadeSwap(signedOutView, signedInView);
       memberGreeting.textContent = 'Welcome, ' + (user.displayName || 'Member');
 
       const memberRef = db.collection('members').doc(user.email);
@@ -1558,18 +1653,17 @@ if (typeof firebase === 'undefined') {
 
       const isPaid = tier !== 'Free';
       memberTierBadge.textContent = isPaid ? tier + ' Member' : 'Free Member';
-      freeTierBlock.style.display = isPaid ? 'none' : 'block';
-      paidTierBlock.style.display = isPaid ? 'block' : 'none';
+      fadeSwap(isPaid ? freeTierBlock : paidTierBlock, isPaid ? paidTierBlock : freeTierBlock);
 
-      memberLeaderboard.style.display = 'block';
+      fadeIn(memberLeaderboard);
       loadPublicLeaderboard();
 
       if (user.email === ADMIN_EMAIL) {
         isAdminUser = true;
-        adminPanel.style.display = 'block';
-        adminEventPanel.style.display = 'block';
-        pendingPaymentsPanel.style.display = 'block';
-        pendingApplicationsPanel.style.display = 'block';
+        fadeIn(adminPanel);
+        fadeIn(adminEventPanel);
+        fadeIn(pendingPaymentsPanel);
+        fadeIn(pendingApplicationsPanel);
         loadAllMembersForAdmin();
         loadPendingPayments();
         loadPendingApplications();
@@ -1583,11 +1677,10 @@ if (typeof firebase === 'undefined') {
       renderEvents();
 
       currentUserEmail = user.email || null;
-      myTicketsPanel.style.display = 'block';
+      fadeIn(myTicketsPanel);
       loadMyTickets();
     } else {
-      signedOutView.style.display = 'block';
-      signedInView.style.display = 'none';
+      fadeSwap(signedInView, signedOutView);
       currentUserName = null;
       currentUserTier = 'Free';
       currentUserEmail = null;
