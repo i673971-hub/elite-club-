@@ -42,6 +42,25 @@
     ::view-transition-new(root){ animation: ui-fade-in 0.32s ease both; }
     @keyframes ui-fade-out{ to{ opacity:0; } }
     @keyframes ui-fade-in{ from{ opacity:0; transform:translateY(6px); } }
+
+    /* ===== Letter-by-letter headline animation (AE-style: 5-frame stagger @ 30fps = 0.1667s/letter) ===== */
+    .typo-headline{ overflow-wrap:break-word; }
+    .typo-headline .typo-word{ display:inline-block; white-space:nowrap; }
+    .typo-headline .typo-letter{
+      display:inline-block; opacity:0; transform:translateY(0.5em);
+      transition:opacity 0.42s cubic-bezier(0.2,0.8,0.2,1), transform 0.42s cubic-bezier(0.2,0.8,0.2,1);
+    }
+    .typo-headline .typo-letter.in{ opacity:1; transform:translateY(0); }
+    .typo-typeline{ position:relative; }
+    .typo-typeline .typo-cursor{
+      display:inline-block; width:2px; margin-left:2px; background:currentColor;
+      animation:typo-blink 0.85s steps(1) infinite;
+    }
+    @keyframes typo-blink{ 50%{ opacity:0; } }
+    @media (prefers-reduced-motion: reduce){
+      .typo-headline .typo-letter{ opacity:1; transform:none; transition:none; }
+      .typo-typeline .typo-cursor{ display:none; }
+    }
   </style>
 </head>
 <body class="font-sans antialiased">
@@ -82,11 +101,11 @@
   <section class="pt-32 pb-24 px-6">
     <div class="max-w-4xl mx-auto text-center">
       <p class="text-club-steel/80 text-sm tracking-[0.25em] uppercase mb-6">Elite Club Intelligence</p>
-      <h1 class="font-serif text-4xl md:text-6xl leading-tight mb-8">
+      <h1 class="typo-headline font-serif text-4xl md:text-6xl leading-tight mb-8">
         Clear. Precise.<br>
         <span class="text-club-steel">Automated.</span>
       </h1>
-      <p class="text-lg md:text-xl text-club-ivory/70 max-w-2xl mx-auto mb-12 leading-relaxed">
+      <p class="typo-typeline text-lg md:text-xl text-club-ivory/70 max-w-2xl mx-auto mb-12 leading-relaxed">
         We design automation that brings clarity, precision, and efficiency to the way your company operates — with the same standards of discretion that define the Club.
       </p>
       <a href="#consult" class="inline-flex px-8 py-3.5 bg-club-steel text-club-black font-medium rounded-full hover:bg-club-steel/90 transition">
@@ -118,7 +137,7 @@
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-20">
         <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">What We Do</p>
-        <h2 class="font-serif text-4xl md:text-5xl">Our Services</h2>
+        <h2 class="typo-headline font-serif text-4xl md:text-5xl">Our Services</h2>
       </div>
 
       <div class="grid md:grid-cols-3 gap-8">
@@ -173,8 +192,8 @@
       <div class="grid md:grid-cols-2 gap-16 items-center">
         <div>
           <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">How We Work</p>
-          <h2 class="font-serif text-4xl mb-6">Precision over volume</h2>
-          <p class="text-club-ivory/70 leading-relaxed text-lg mb-8">
+          <h2 class="typo-headline font-serif text-4xl mb-6">Precision over volume</h2>
+          <p class="typo-typeline text-club-ivory/70 leading-relaxed text-lg mb-8">
             We take on a limited number of engagements. Every system is designed with clarity, security, and long-term maintainability in mind — never as a black box.
           </p>
           <ul class="space-y-4 text-club-ivory/60">
@@ -197,8 +216,8 @@
   <section id="consult" class="py-32 px-6">
     <div class="max-w-2xl mx-auto text-center">
       <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">Next Step</p>
-      <h2 class="font-serif text-4xl mb-6">Request a Consultation</h2>
-      <p class="text-club-ivory/60 mb-12 leading-relaxed">
+      <h2 class="typo-headline font-serif text-4xl mb-6">Request a Consultation</h2>
+      <p class="typo-typeline text-club-ivory/60 mb-12 leading-relaxed">
         Tell us briefly about the processes you want to improve. We review every request personally and respond within a few days.
       </p>
       <div class="inline-flex flex-col items-center gap-4 p-8 border steel-border rounded-2xl">
@@ -253,6 +272,113 @@
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeMenu();
       });
+    })();
+  </script>
+
+  <script>
+    (function(){
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const FRAME_STAGGER = 5 / 30; // 5 frames at 30fps, matching the AE expression
+
+      function splitIntoLetters(el){
+        const letters = [];
+        el.setAttribute('data-typo-source', el.textContent);
+        function processNode(node, container){
+          if (node.nodeType === Node.TEXT_NODE){
+            const parts = node.textContent.split(/(\s+)/);
+            parts.forEach(part => {
+              if (part === '') return;
+              if (/^\s+$/.test(part)){
+                container.appendChild(document.createTextNode(part));
+                return;
+              }
+              const wordSpan = document.createElement('span');
+              wordSpan.className = 'typo-word';
+              [...part].forEach(ch => {
+                const letterSpan = document.createElement('span');
+                letterSpan.className = 'typo-letter';
+                letterSpan.textContent = ch;
+                wordSpan.appendChild(letterSpan);
+                letters.push(letterSpan);
+              });
+              container.appendChild(wordSpan);
+            });
+          } else if (node.nodeType === Node.ELEMENT_NODE){
+            const clone = node.cloneNode(false);
+            container.appendChild(clone);
+            Array.from(node.childNodes).forEach(child => processNode(child, clone));
+          }
+        }
+        const fragment = document.createDocumentFragment();
+        Array.from(el.childNodes).forEach(child => processNode(child, fragment));
+        el.innerHTML = '';
+        el.appendChild(fragment);
+        return letters;
+      }
+
+      function animateHeadline(headlineEl, onDone){
+        const letters = splitIntoLetters(headlineEl);
+        if (reduceMotion){
+          letters.forEach(l => l.classList.add('in'));
+          if (onDone) onDone();
+          return;
+        }
+        letters.forEach((span, i) => {
+          span.style.transitionDelay = (i * FRAME_STAGGER).toFixed(3) + 's';
+        });
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          letters.forEach(span => span.classList.add('in'));
+        }));
+        const perLetterDuration = 0.42;
+        const totalMs = (Math.max(letters.length - 1, 0) * FRAME_STAGGER + perLetterDuration) * 1000;
+        if (onDone) setTimeout(onDone, totalMs);
+      }
+
+      function typewrite(el){
+        const text = (el.getAttribute('data-typo-source') || el.textContent).trim();
+        el.setAttribute('data-typo-source', text);
+        el.textContent = '';
+        const cursor = document.createElement('span');
+        cursor.className = 'typo-cursor';
+        el.appendChild(cursor);
+        if (reduceMotion){
+          el.textContent = text;
+          return;
+        }
+        let i = 0;
+        const speed = 22;
+        (function step(){
+          el.textContent = text.slice(0, i);
+          el.appendChild(cursor);
+          i++;
+          if (i <= text.length){
+            setTimeout(step, speed);
+          } else {
+            setTimeout(() => cursor.remove(), 500);
+          }
+        })();
+      }
+
+      const headlines = document.querySelectorAll('.typo-headline');
+      if (!('IntersectionObserver' in window) || reduceMotion){
+        headlines.forEach(h => {
+          const letters = splitIntoLetters(h);
+          letters.forEach(l => l.classList.add('in'));
+          const next = h.nextElementSibling;
+          if (next && next.classList.contains('typo-typeline')) typewrite(next);
+        });
+      } else {
+        const headlineObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            headlineObserver.unobserve(entry.target);
+            const next = entry.target.nextElementSibling;
+            const hasTypeline = next && next.classList.contains('typo-typeline');
+            animateHeadline(entry.target, hasTypeline ? () => typewrite(next) : null);
+          });
+        }, { threshold: 0.4, rootMargin: '0px 0px -40px 0px' });
+        headlines.forEach(h => headlineObserver.observe(h));
+      }
     })();
   </script>
 
