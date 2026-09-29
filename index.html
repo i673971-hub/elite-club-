@@ -375,7 +375,7 @@
     </div>
   </section>
 
-  <!-- Partners -->
+<!-- HIDDEN — unverified placeholder content. Delete this line and the matching closing marker to restore it: Partners strip
   <section class="scroll-reveal partners py-16 px-6" id="partners">
     <div class="text-center mb-10">
       <p class="text-club-gold/70 text-sm tracking-widest uppercase mb-2">In Good Company</p>
@@ -391,6 +391,7 @@
       <span class="partner-chip">Technology</span>
     </div>
   </section>
+  END-HIDDEN -->
 
   <!-- The Charter -->
   <section id="charter" class="scroll-reveal py-32 px-6">
@@ -494,7 +495,7 @@
     </div>
   </section>
 
-  <!-- Testimonials -->
+<!-- HIDDEN — unverified placeholder content. Delete this line and the matching closing marker to restore it: Testimonials
   <section class="scroll-reveal py-24 px-6 border-t gold-border">
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-16">
@@ -517,6 +518,7 @@
       </div>
     </div>
   </section>
+  END-HIDDEN -->
 
   <!-- Membership Tiers -->
   <span id="pricing"></span>
@@ -525,7 +527,7 @@
       <div class="text-center mb-16">
         <p class="text-club-gold/70 text-sm tracking-widest uppercase mb-4">Membership</p>
         <h2 class="typo-headline font-serif text-4xl md:text-5xl mb-4">Choose Your Tier</h2>
-        <p class="typo-typeline text-club-ivory/60 max-w-xl mx-auto">Membership is granted by application. Payment is requested only after approval.</p>
+        <p class="typo-typeline text-club-ivory/60 max-w-xl mx-auto">Membership is granted by application. You submit your payment reference with your application, and it is verified when your application is reviewed.</p>
       </div>
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Executive -->
@@ -572,13 +574,13 @@
           <ul class="space-y-3 text-sm text-club-ivory/70 mb-8 flex-1">
             <li>• Everything in Founding</li>
             <li>• Personal sponsor introduction</li>
-            <li>• Private counsel sessions</li>
+            <li>• Private one-to-one sessions with Club advisors</li>
             <li>• Invitation-only retreats</li>
           </ul>
           <a href="#request-membership" class="apply-tier-btn block text-center py-3 border border-club-gold/40 rounded-full text-club-gold hover:bg-club-gold/10 transition text-sm" data-tier="Exclusive">Apply for This Tier</a>
         </div>
       </div>
-      <p class="upi-note">Once your application is approved, you'll be able to complete payment (UPI or Crypto) right here after signing in.</p>
+      <p class="upi-note">To apply: choose a tier, sign in, pay by UPI or crypto, and submit your payment reference with your application. If your application is not approved, your payment is refunded (see <a href="#faq" style="text-decoration:underline;">refund policy</a>).</p>
     </div>
   </section>
   <!-- Members / Sign In -->
@@ -589,7 +591,7 @@
     </div>
     <div class="members-wrap">
       <div id="signedOutView">
-        <p style="margin-bottom:26px; color:var(--ink-muted);">Sign in with Google to explore the members area. Free to join — some content is reserved for paid tiers.</p>
+        <p style="margin-bottom:26px; color:var(--ink-muted);">Sign in with Google to explore the members area. Signing in is free; paid tiers unlock more content, and membership itself is by application.</p>
         <button class="signin-btn" id="googleSignInBtn">
           <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4c-7.7 0-14.3 4.3-17.7 10.7z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.8 14.1-5l-6.5-5.4C29.6 35.1 26.9 36 24 36c-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.5 5.4C41.5 36.2 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
           Sign in with Google
@@ -634,7 +636,7 @@
             <div class="luma-row">
               <input id="evPhotoUrl" type="url" placeholder="Cover Photo URL (optional)">
             </div>
-            <p class="form-note" style="text-align:left; margin-top:-8px;">Upload the image to your repo's <code>assets</code> folder on GitHub first, then paste its URL here — e.g. https://raw.githubusercontent.com/i673971-hub/elite-club-/main/assets/my-event.jpg</p>
+            <p class="form-note" style="text-align:left; margin-top:-8px;">Upload the image to your site's <code>assets</code> folder first, then paste its image link (https://…) here.</p>
             <div class="luma-row">
               <input id="evTitle" type="text" placeholder="Event Name" required>
             </div>
@@ -771,15 +773,15 @@
 
       <div class="field">
         <label for="reqIntro">Step 2 — Brief Introduction: Why do you seek membership?</label>
-        <textarea id="reqIntro" maxlength="1400" required></textarea>
-        <div style="display:flex; justify-content:space-between; margin-top:8px; font-family:'Inter', sans-serif; font-size:0.62rem; color:var(--ink-muted);"><span>Maximum 200 words</span><span id="reqWordCount">0 / 200</span></div>
+        <textarea id="reqIntro" maxlength="300" placeholder="A sentence or two is enough." required></textarea>
+        <div style="display:flex; justify-content:space-between; margin-top:8px; font-family:'Inter', sans-serif; font-size:0.62rem; color:var(--ink-muted);"><span>A brief note — up to 50 words</span><span id="reqWordCount">0 / 50</span></div>
       </div>
       <div class="field">
         <label for="reqLink">Optional Link <span style="opacity:0.6; text-transform:none; letter-spacing:0;">(personal site, LinkedIn, or work)</span></label>
         <input id="reqLink" type="url" placeholder="https://">
       </div>
       <button type="submit" class="w-full py-3.5 bg-club-gold text-club-black font-medium rounded-full" style="cursor:pointer;">Submit Application</button>
-      <p style="text-align:center; margin-top:14px; font-size:0.8rem; font-style:italic; color:var(--ink-muted);">Your tier is activated only after admin confirms your payment reference.</p>
+      <p style="text-align:center; margin-top:14px; font-size:0.8rem; font-style:italic; color:var(--ink-muted);">Your tier is activated only after we confirm your payment reference. If your application is not approved, your payment is refunded in full.</p>
     </form>
 
     <div id="applyRequestSuccess" role="status" style="display:none; max-width:640px; margin:0 auto; text-align:center; padding:60px 30px; border:1px solid var(--gold-line); border-radius:18px; background:var(--glass-fill);">
@@ -805,6 +807,7 @@
       </div>
       <p class="wallet-note">Ethereum network. Please confirm the address before sending.</p>
     </div>
+<!-- HIDDEN — unverified placeholder content. Delete this line and the matching closing marker to restore it: Leading Contributors
     <div class="max-w-2xl mx-auto text-center mb-10">
       <p class="text-club-gold/70 text-sm tracking-widest uppercase mb-4">Recognition</p>
       <h2 class="typo-headline font-serif text-3xl">Leading Contributors</h2>
@@ -826,10 +829,12 @@
         <div class="lb-amount">0.75 ETH</div>
       </div>
     </div>
+  END-HIDDEN -->
+
   </section>
 
   <!-- FAQ (simplified) -->
-  <section class="scroll-reveal py-24 px-6 border-t gold-border">
+  <section id="faq" class="scroll-reveal py-24 px-6 border-t gold-border">
     <div class="max-w-3xl mx-auto">
       <h2 class="typo-headline font-serif text-3xl text-center mb-12">Before you apply</h2>
       <div class="space-y-6 text-club-ivory/70">
@@ -843,7 +848,7 @@
         </div>
         <div>
           <h3 class="text-club-ivory font-medium mb-2">Are membership payments refundable?</h3>
-          <p class="text-sm leading-relaxed">Membership is confirmed after both application and payment are reviewed together.</p>
+          <p class="text-sm leading-relaxed">If your application is not approved, your payment is refunded in full to the UPI account or wallet it came from. Once a membership has been activated, fees are non-refundable unless we agree otherwise in writing. To request a refund, message us on WhatsApp using the QR code in the Request Membership section.</p>
         </div>
       </div>
     </div>
@@ -860,6 +865,7 @@
       <div class="flex gap-6 text-sm text-club-ivory/50">
         <a href="intelligence.html" class="hover:text-club-steel transition">Intelligence</a>
         <a href="#donate" class="hover:text-club-gold transition">Contribute</a>
+        <a href="#faq" class="hover:text-club-gold transition">Refunds &amp; FAQ</a>
       </div>
     </div>
   </footer>
@@ -1106,6 +1112,20 @@ if (typeof firebase === 'undefined') {
   const db = firebase.firestore();
   let isAdminUser = false;
 
+  // ===== Safety helpers: never put user-supplied text into innerHTML raw =====
+  function esc(v){
+    return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  // Older saved labels contain the literal text "&middot;" — keep it readable after escaping.
+  function escLabel(v){ return esc(v).replace(/&amp;middot;/g, '\u00b7'); }
+  function safeUrl(u){
+    if (!u) return '';
+    try { const x = new URL(u, location.href); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : ''; }
+    catch (e) { return ''; }
+  }
+  const VALID_TIERS = ['Executive', 'Premier', 'Founding Member', 'Exclusive'];
+  const TIER_PRICES = { 'Executive': 999, 'Premier': 2999, 'Founding Member': 4999, 'Exclusive': 9999 };
+
   // ===== Small fade-in helpers for smoother state transitions =====
   const reduceMotionForUI = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function fadeIn(el, display){
@@ -1213,9 +1233,9 @@ if (typeof firebase === 'undefined') {
 
   reqIntro.addEventListener('input', () => {
     const words = reqIntro.value.trim().split(/\s+/).filter(Boolean);
-    reqWordCount.textContent = words.length + ' / 200';
-    reqWordCount.style.color = words.length > 200 ? '#ffffff' : '';
-    reqWordCount.style.fontWeight = words.length > 200 ? '700' : 'normal';
+    reqWordCount.textContent = words.length + ' / 50';
+    reqWordCount.style.color = words.length > 50 ? '#ffffff' : '';
+    reqWordCount.style.fontWeight = words.length > 50 ? '700' : 'normal';
   });
 
   auth.onAuthStateChanged((user) => {
@@ -1237,6 +1257,9 @@ if (typeof firebase === 'undefined') {
     const paymentRef = reqPaymentRef.value.trim();
     if (!paymentRef){ reqPaymentRef.focus(); return; }
     if (!intro){ reqIntro.focus(); return; }
+    if (intro.split(/\s+/).filter(Boolean).length > 50){ alert('Please keep your introduction to 50 words or fewer.'); reqIntro.focus(); return; }
+    const rawLink = document.getElementById('reqLink').value.trim();
+    if (rawLink && !/^https?:\/\//i.test(rawLink)){ alert('Please enter a full link starting with https://'); document.getElementById('reqLink').focus(); return; }
     const submitBtn = applyRequestForm.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
     try {
@@ -1250,7 +1273,7 @@ if (typeof firebase === 'undefined') {
         method: reqPaymentMethod,
         paymentRef: paymentRef,
         intro: intro,
-        link: document.getElementById('reqLink').value.trim() || null,
+        link: rawLink || null,
         status: 'pending',
         submittedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -1274,53 +1297,43 @@ if (typeof firebase === 'undefined') {
     const monthName = d.toLocaleString('en-US', { month: 'short' });
     const day = d.getDate();
     const timeLabel = new Date(sortDate + 'T' + time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-    return { display: monthName + ' ' + day + ', ' + timeLabel + ' &middot; ' + location, timeLabel };
-  }
-
-  async function seedDefaultEventsIfEmpty() {
-    const snap = await db.collection('events').limit(1).get();
-    if (!snap.empty) return;
-    const defaults = [
-      { title: 'Autumn General Assembly', sortDate: '2026-09-12', time: '19:00', location: 'The Main Hall', price: 0 },
-      { title: "New Members' Reception", sortDate: '2026-10-04', time: '18:30', location: 'The Parlour', price: 0 },
-      { title: "Founders' Dinner", sortDate: '2026-11-21', time: '20:00', location: 'The Great Room', price: 0 }
-    ];
-    const batch = db.batch();
-    defaults.forEach(ev => {
-      const ref = db.collection('events').doc();
-      batch.set(ref, Object.assign({}, ev, { createdAt: firebase.firestore.FieldValue.serverTimestamp() }));
-    });
-    await batch.commit();
+    return { display: monthName + ' ' + day + ', ' + timeLabel + ' \u00b7 ' + location, timeLabel };
   }
 
   async function renderEvents() {
     try {
-      await seedDefaultEventsIfEmpty();
       const snapshot = await db.collection('events').orderBy('sortDate', 'asc').get();
-      if (snapshot.empty) {
-        eventListContainer.innerHTML = '<div class="event-row"><div class="event-info"><span>No upcoming events yet.</span></div></div>';
+      // Visitors only see upcoming events; the admin also sees past ones so they can delete them.
+      const today = new Date().toLocaleDateString('en-CA');
+      const docs = [];
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        if (isAdminUser || (d.sortDate && d.sortDate >= today)) docs.push({ id: doc.id, d: d });
+      });
+      if (!docs.length) {
+        eventListContainer.innerHTML = '<div class="event-row"><div class="event-info"><span>No upcoming assemblies are scheduled yet. Please check back soon.</span></div></div>';
         return;
       }
       let html = '';
-      snapshot.forEach(doc => {
-        const d = doc.data();
+      docs.forEach(({ id, d }) => {
         const dt = new Date(d.sortDate + 'T00:00:00');
         const month = MONTH_ABBR[dt.getMonth()];
         const day = String(dt.getDate()).padStart(2, '0');
         const { display } = formatEventDateLabel(d.sortDate, d.time || '00:00', d.location || '');
         const price = Number(d.price) || 0;
-        const btnLabel = 'Reserve';
+        const isPast = d.sortDate < today;
+        const img = safeUrl(d.imageUrl);
         const deleteBtnHtml = isAdminUser
-          ? '<button class="btn btn-ghost delete-event-btn" data-event-id="' + doc.id + '" data-event-title="' + (d.title || 'this event').replace(/"/g, '&quot;') + '" type="button" style="margin-left:8px; border-color:rgba(255,80,80,0.4); color:#ff8a8a;">Delete</button>'
+          ? '<button class="btn btn-ghost delete-event-btn" data-event-id="' + esc(id) + '" data-event-title="' + esc(d.title || 'this event') + '" type="button" style="margin-left:8px; border-color:rgba(255,80,80,0.4); color:#ff8a8a;">Delete</button>'
           : '';
         html += '<div class="event-row">' +
           '<div class="event-date">' + month + '<span class="day">' + day + '</span></div>' +
-          (d.imageUrl ? '<img src="' + d.imageUrl + '" alt="" class="event-thumb">' : '') +
-          '<div class="event-info"><h3>' + (d.title || 'Untitled Event') + '</h3><span>' + display + '</span>' +
-          (d.description ? '<p class="event-desc">' + d.description.replace(/</g, '&lt;') + '</p>' : '') +
+          (img ? '<img src="' + esc(img) + '" alt="" class="event-thumb">' : '') +
+          '<div class="event-info"><h3>' + esc(d.title || 'Untitled Event') + (isPast ? ' <small style="opacity:.6">(past)</small>' : '') + '</h3><span>' + esc(display) + (price > 0 ? ' &middot; &#8377;' + price : '') + '</span>' +
+          (d.description ? '<p class="event-desc">' + esc(d.description) + '</p>' : '') +
           '</div>' +
           '<div style="display:flex; align-items:center;">' +
-          '<button class="btn btn-ghost reserve-btn" data-event-id="' + doc.id + '" data-event="' + (d.title || '').replace(/"/g, '&quot;') + '" data-date="' + display + '" data-price="' + price + '">' + btnLabel + '</button>' +
+          (isPast ? '' : '<button class="btn btn-ghost reserve-btn" data-event-id="' + esc(id) + '" data-event="' + esc(d.title || '') + '" data-date="' + esc(display) + '" data-price="' + price + '">Reserve</button>') +
           deleteBtnHtml +
           '</div>' +
           '</div>';
@@ -1328,7 +1341,7 @@ if (typeof firebase === 'undefined') {
       eventListContainer.innerHTML = html;
     } catch (err) {
       console.error('Could not load events', err);
-      eventListContainer.innerHTML = '<div class="event-row"><div class="event-info"><span>Could not load events.</span></div></div>';
+      eventListContainer.innerHTML = '<div class="event-row"><div class="event-info"><span>We could not load the calendar right now. Please refresh in a moment.</span></div></div>';
     }
   }
   renderEvents();
@@ -1424,6 +1437,7 @@ if (typeof firebase === 'undefined') {
     if (clean === 'executive') return 'Executive';
     if (clean === 'premier') return 'Premier';
     if (clean === 'founding member' || clean === 'founding') return 'Founding Member';
+    if (clean === 'exclusive') return 'Exclusive';
     return 'Free';
   }
 
@@ -1436,7 +1450,7 @@ if (typeof firebase === 'undefined') {
 
   const memberLeaderboard = document.getElementById('memberLeaderboard');
   const memberLeaderboardList = document.getElementById('memberLeaderboardList');
-  const TIER_ORDER = ['Founding Member', 'Premier', 'Executive', 'Free'];
+  const TIER_ORDER = ['Exclusive', 'Founding Member', 'Premier', 'Executive', 'Free'];
 
   async function loadPublicLeaderboard() {
     memberLeaderboardList.textContent = 'Loading members…';
@@ -1446,7 +1460,7 @@ if (typeof firebase === 'undefined') {
         memberLeaderboardList.textContent = 'No members have registered yet.';
         return;
       }
-      const groups = { 'Founding Member': [], 'Premier': [], 'Executive': [], 'Free': [] };
+      const groups = { 'Exclusive': [], 'Founding Member': [], 'Premier': [], 'Executive': [], 'Free': [] };
       snapshot.forEach(doc => {
         const d = doc.data();
         const tier = normalizeTier(d.tier);
@@ -1460,7 +1474,7 @@ if (typeof firebase === 'undefined') {
         groups[tier].forEach(name => {
           const chipClass = tier === 'Free' ? 'free' : 'paid';
           html += '<div class="lb-member-row">' + badgeIconSvg(tier) +
-            '<span class="lb-name-text">' + name + '</span>' +
+            '<span class="lb-name-text">' + esc(name) + '</span>' +
             '<span class="lb-tier-chip ' + chipClass + '">' + tier + '</span></div>';
         });
         html += '</div>';
@@ -1496,8 +1510,8 @@ if (typeof firebase === 'undefined') {
       snapshot.forEach(doc => {
         const d = doc.data();
         html += '<div class="admin-row"><div class="m-name">' +
-          badgeIconSvg(normalizeTier(d.tier)) + (d.name || 'Unnamed') +
-          '<span class="m-email">' + (d.email || '') + '</span></div>' +
+          badgeIconSvg(normalizeTier(d.tier)) + esc(d.name || 'Unnamed') +
+          '<span class="m-email">' + esc(d.email || '') + '</span></div>' +
           badgeHtml(d.tier || 'free') + '</div>';
       });
       adminMemberList.innerHTML = html;
@@ -1526,12 +1540,12 @@ if (typeof firebase === 'undefined') {
         const d = doc.data();
         const introShort = (d.intro || '').slice(0, 140) + ((d.intro || '').length > 140 ? '…' : '');
         html += '<div class="admin-row" data-app-id="' + doc.id + '" style="align-items:flex-start; flex-direction:column; gap:10px;">' +
-          '<div class="m-name">' + (d.name || d.email || 'Applicant') +
-          '<span class="m-email">' + (d.email || '') + ' &middot; Tier: ' + (d.tier || '') + (d.link ? (' &middot; ' + d.link) : '') + '</span>' +
-          '<span class="m-email" style="display:block; margin-top:4px;">Payment: &#8377;' + (d.amount || '?') + ' via ' + (d.method || '?') + ' &middot; Ref: ' + (d.paymentRef || 'none provided') + '</span>' +
-          '<span class="m-email" style="display:block; margin-top:6px; opacity:0.85;">' + introShort + '</span></div>' +
+          '<div class="m-name">' + esc(d.name || d.email || 'Applicant') +
+          '<span class="m-email">' + esc(d.email || '') + ' &middot; Tier: ' + esc(d.tier || '') + (d.link ? (' &middot; ' + esc(d.link)) : '') + '</span>' +
+          '<span class="m-email" style="display:block; margin-top:4px;">Payment: &#8377;' + esc(d.amount || '?') + ' via ' + esc(d.method || '?') + ' &middot; Ref: ' + esc(d.paymentRef || 'none provided') + ((TIER_PRICES[d.tier] && Number(d.amount) !== TIER_PRICES[d.tier]) ? ' <b style="color:#ff8a8a;">&#9888; amount does not match tier price (&#8377;' + TIER_PRICES[d.tier] + ')</b>' : '') + '</span>' +
+          '<span class="m-email" style="display:block; margin-top:6px; opacity:0.85;">' + esc(introShort) + '</span></div>' +
           '<div style="display:flex; gap:8px;">' +
-          '<button class="btn btn-solid app-approve-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-app-id="' + doc.id + '" data-email="' + (d.email || '') + '" data-tier="' + (d.tier || '') + '">Approve &amp; Activate</button>' +
+          '<button class="btn btn-solid app-approve-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-app-id="' + doc.id + '" data-email="' + esc(d.email || '') + '" data-tier="' + esc(d.tier || '') + '">Approve &amp; Activate</button>' +
           '<button class="btn btn-ghost app-reject-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-app-id="' + doc.id + '">Reject</button>' +
           '</div></div>';
       });
@@ -1550,6 +1564,7 @@ if (typeof firebase === 'undefined') {
       const appId = approveBtn.getAttribute('data-app-id');
       const email = approveBtn.getAttribute('data-email');
       const tier = approveBtn.getAttribute('data-tier');
+      if (!email || VALID_TIERS.indexOf(tier) === -1) { alert('This application has an invalid email or tier, so it cannot be approved.'); approveBtn.disabled = false; return; }
       try {
         // Payment was already submitted with the application, so approval
         // grants the tier directly — verify the payment reference against
@@ -1597,12 +1612,12 @@ if (typeof firebase === 'undefined') {
         const isEvent = d.type === 'event';
         const label = isEvent ? ('Event: ' + (d.eventTitle || '')) : (d.tier || '');
         html += '<div class="admin-row" data-claim-id="' + doc.id + '">' +
-          '<div class="m-name">' + (d.memberName || d.memberEmail || 'Member') +
-          '<span class="m-email">' + label + ' &middot; &#8377;' + (d.amount || '') + ' &middot; ' + (d.method || 'UPI') + ' &middot; Ref: ' + (d.utr || '') + '</span></div>' +
+          '<div class="m-name">' + esc(d.memberName || d.memberEmail || 'Member') +
+          '<span class="m-email">' + esc(label) + ' &middot; &#8377;' + esc(d.amount || '') + ' &middot; ' + esc(d.method || 'UPI') + ' &middot; Ref: ' + esc(d.utr || '') + '</span></div>' +
           '<div style="display:flex; gap:8px;">' +
           '<button class="btn btn-solid claim-approve-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" ' +
-            'data-claim-id="' + doc.id + '" data-type="' + (d.type || 'membership') + '" data-email="' + (d.memberEmail || '') + '" data-name="' + (d.memberName || '') + '" ' +
-            'data-tier="' + (d.tier || '') + '" data-event-id="' + (d.eventId || '') + '" data-event-title="' + (d.eventTitle || '').replace(/"/g, '&quot;') + '" data-event-date="' + (d.eventDateLabel || '') + '">Approve</button>' +
+            'data-claim-id="' + doc.id + '" data-type="' + esc(d.type || 'membership') + '" data-email="' + esc(d.memberEmail || '') + '" data-name="' + esc(d.memberName || '') + '" ' +
+            'data-tier="' + esc(d.tier || '') + '" data-event-id="' + esc(d.eventId || '') + '" data-event-title="' + esc(d.eventTitle || '') + '" data-event-date="' + esc(d.eventDateLabel || '') + '">Approve</button>' +
           '<button class="btn btn-ghost claim-reject-btn" style="padding:8px 14px; font-size:0.62rem; cursor:pointer;" data-claim-id="' + doc.id + '">Reject</button>' +
           '</div></div>';
       });
@@ -1634,6 +1649,7 @@ if (typeof firebase === 'undefined') {
           });
         } else {
           const tier = approveBtn.getAttribute('data-tier');
+          if (!email || VALID_TIERS.indexOf(tier) === -1) { alert('This claim has an invalid email or tier, so it cannot be approved.'); approveBtn.disabled = false; return; }
           await db.collection('members').doc(email).set({ tier }, { merge: true });
         }
         await db.collection('paymentClaims').doc(claimId).update({
@@ -1775,8 +1791,8 @@ if (typeof firebase === 'undefined') {
       let html = '';
       snapshot.forEach(doc => {
         const d = doc.data();
-        html += '<div class="admin-row"><div class="m-name">' + (d.eventTitle || 'Event') +
-          '<span class="m-email">' + (d.eventDateLabel || '') + ' &middot; Ticket #' + doc.id.slice(0, 8).toUpperCase() + '</span></div></div>';
+        html += '<div class="admin-row"><div class="m-name">' + esc(d.eventTitle || 'Event') +
+          '<span class="m-email">' + escLabel(d.eventDateLabel || '') + ' &middot; Ticket #' + doc.id.slice(0, 8).toUpperCase() + '</span></div></div>';
       });
       myTicketsList.innerHTML = html;
     } catch (err) {
@@ -1925,7 +1941,7 @@ if (typeof firebase === 'undefined') {
 
       voucherName.textContent = currentUserName;
       voucherEvent.textContent = eventName;
-      voucherDate.innerHTML = eventDate;
+      voucherDate.textContent = String(eventDate || '').replace(/&middot;/g, '\u00b7');
       voucherTier.textContent = 'VIP ' + currentUserTier + ' Member';
       voucherTicketId.textContent = 'Ticket #' + ticketRef.id.slice(0, 8).toUpperCase();
       voucherOverlay.classList.add('open');
@@ -1990,7 +2006,7 @@ if (typeof firebase === 'undefined') {
       <button id="ecChatClose" aria-label="Close chat">&times;</button>
     </div>
     <div id="ecChatMessages">
-      <div class="ec-msg bot">Good evening. I'm Bot — ask me about membership, events, or anything else on your mind.</div>
+      <div class="ec-msg bot">Welcome. I'm Bot — ask me about membership, events, refunds, or anything else on your mind.</div>
     </div>
     <form id="ecChatForm">
       <input id="ecChatInput" type="text" placeholder="Type a message..." autocomplete="off" required>
@@ -2022,26 +2038,28 @@ if (typeof firebase === 'undefined') {
       const faq = [
         { keys: ['join', 'membership', 'become a member', 'sign up', 'apply'],
           reply: "You can apply under the Membership section — choose Executive (₹999), Premier (₹2,999), Founding Member (₹4,999), or Exclusive (₹9,999), then complete payment and submit your application under Request Membership." },
+        { keys: ['refund', 'money back', 'cancel'],
+          reply: "If your application is not approved, your payment is refunded in full. Once a membership is activated, fees are non-refundable unless agreed in writing. See the FAQ near the bottom of the page, or message us on WhatsApp." },
         { keys: ['price', 'cost', 'fee', 'how much'],
-          reply: "Membership tiers are: Executive ₹999/yr, Premier ₹2,999/yr, and Founding Member ₹4,999/yr. See the Membership section for what each includes." },
+          reply: "Membership tiers are: Executive ₹999/yr, Premier ₹2,999/yr, Founding Member ₹4,999/yr, and Exclusive ₹9,999/yr (by invitation). See the Membership section for what each includes." },
         { keys: ['event', 'calendar', 'assembly', 'gala', 'dinner', 'reception'],
           reply: "See the Calendar section for our current upcoming assemblies and their dates." },
         { keys: ['donate', 'contribute', 'donation', 'crypto', 'upi', 'wallet'],
           reply: "You can contribute via UPI or crypto — see the Contribute section for the wallet address and UPI button, plus the current leaderboard of top contributors." },
         { keys: ['contact', 'reach', 'email', 'phone', 'talk to someone'],
-          reply: "The best way to reach us is by submitting a Request Membership application with your details, or attending one of our upcoming assemblies in person." },
+          reply: "The quickest way to reach us is WhatsApp — scan the QR code in the Request Membership section. You can also submit a membership application with your details." },
         { keys: ['charter', 'mission', 'about', 'what is elite club', 'what is this'],
           reply: "Elite Club is a society built on fellowship, standards, occasion, and continuity — read the full Charter section above for our founding philosophy." },
         { keys: ['tier', 'executive', 'premier', 'founding'],
           reply: "Executive (₹999) covers general assemblies and newsletters. Premier (₹2,999) adds priority reservations and guest privileges. Founding Member (₹4,999) includes voting rights and a place in the Charter." },
         { keys: ['hello', 'hi', 'hey'],
-          reply: "Good evening. How may I assist you with the Club today?" }
+          reply: "Welcome. How may I assist you with the Club today?" }
       ];
 
       function getReply(text){
         const t = text.toLowerCase();
         for(const item of faq){
-          if(item.keys.some(k => t.includes(k))) return item.reply;
+          if(item.keys.some(k => k.length <= 3 ? new RegExp('\\b' + k + '\\b').test(t) : t.includes(k))) return item.reply;
         }
         return "I don't have a ready answer for that, but I'd encourage you to submit a Request Membership application, or ask me about membership tiers, events, or how to contribute.";
       }
