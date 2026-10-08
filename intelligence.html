@@ -1,439 +1,428 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elite Club Intelligence — AI Automation & Agents</title>
-  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            club: {
-              black: '#0A0A0B',
-              ivory: '#F5F2EB',
-              gold: '#C9A86C',
-              steel: '#7A9BB5',
-            }
-          },
-          fontFamily: {
-            serif: ['Playfair Display', 'serif'],
-            sans: ['Inter', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    body { background-color: #0A0A0B; color: #F5F2EB; }
-    .gold-border { border-color: rgba(201, 168, 108, 0.18); }
-    .steel-border { border-color: rgba(122, 155, 181, 0.25); }
-    .card-hover { transition: all 0.35s ease; }
-    .card-hover:hover { transform: translateY(-4px); border-color: rgba(122, 155, 181, 0.45); }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Intelligence — Elite Club AI Automation & Agents</title>
+<link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#0A0A0B; --card:#141517; --card-hi:#191a1c;
+  --ink:#F2F2EF; --muted:#9a9a95; --hair:#2a2b2e;
+  --accent:#7A9BB5; --accent-dim:rgba(122,155,181,0.14);
+  --green:#7bb662; --red:#d96a5a; --blue:#6f9bd6; --purple:#a78bfa; --orange:#e8865a;
+}
+*{box-sizing:border-box;}
+body{ background:var(--page); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
+.mono{ font-family:'JetBrains Mono', monospace; }
+.hair{ border-color:var(--hair) !important; }
+a{ color:inherit; }
 
-    /* Native cross-document page transition, paired with index.html */
-    @view-transition{ navigation: auto; }
-    ::view-transition-old(root){ animation: ui-fade-out 0.22s ease both; }
-    ::view-transition-new(root){ animation: ui-fade-in 0.32s ease both; }
-    @keyframes ui-fade-out{ to{ opacity:0; } }
-    @keyframes ui-fade-in{ from{ opacity:0; transform:translateY(6px); } }
+/* ---- Top nav ---- */
+.ki-nav{ display:flex; align-items:center; justify-content:space-between; padding:14px 28px; gap:18px; }
+.ki-nav-left{ display:flex; align-items:center; gap:22px; font-size:0.84rem; color:var(--muted); }
+.ki-wordmark{ color:var(--ink); font-weight:600; text-transform:lowercase; letter-spacing:0.01em; }
+.ki-nav-left a:hover{ color:var(--ink); }
+.ki-nav-center{ display:flex; align-items:center; gap:8px; position:absolute; left:50%; transform:translateX(-50%); }
+.ki-badge{ font-size:0.62rem; padding:2px 8px; border-radius:999px; border:1px solid var(--hair); color:var(--muted); font-family:'JetBrains Mono',monospace; }
+.ki-nav-right{ display:flex; align-items:center; gap:16px; font-size:0.82rem; color:var(--muted); }
+.ki-cta-circled{ position:relative; padding:4px 14px; color:var(--ink); }
+.ki-cta-circled::before{
+  content:''; position:absolute; inset:-4px -10px; border:1.4px solid var(--accent);
+  border-radius:50% / 60%; transform:rotate(-2deg);
+}
+.ki-star{ display:flex; align-items:center; gap:5px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; }
+.ki-live-dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); display:inline-block; animation:ki-pulse 1.8s ease-in-out infinite; }
+@keyframes ki-pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
 
-    /* ===== Letter-by-letter headline animation (AE-style: 5-frame stagger @ 30fps = 0.1667s/letter) ===== */
-    .typo-headline{ overflow-wrap:break-word; }
-    .typo-headline .typo-word{ display:inline-block; white-space:nowrap; }
-    .typo-headline .typo-letter{
-      display:inline-block; opacity:0; transform:translateY(0.5em);
-      transition:opacity 0.42s cubic-bezier(0.2,0.8,0.2,1), transform 0.42s cubic-bezier(0.2,0.8,0.2,1);
-    }
-    .typo-headline .typo-letter.in{ opacity:1; transform:translateY(0); }
-    .typo-typeline{ position:relative; }
-    .typo-typeline .typo-cursor{
-      display:inline-block; width:2px; margin-left:2px; background:currentColor;
-      animation:typo-blink 0.85s steps(1) infinite;
-    }
-    @keyframes typo-blink{ 50%{ opacity:0; } }
-    @media (prefers-reduced-motion: reduce){
-      .typo-headline .typo-letter{ opacity:1; transform:none; transition:none; }
-      .typo-typeline .typo-cursor{ display:none; }
-    }
-  </style>
+/* ---- Layout: three rails ---- */
+.ki-layout{ display:grid; grid-template-columns:240px 1fr 260px; gap:40px; max-width:1240px; margin:0 auto; padding:70px 28px 0; align-items:start; }
+@media (max-width:1100px){ .ki-layout{ grid-template-columns:1fr; } .ki-rail-left, .ki-rail-right{ position:static !important; } }
+
+.ki-rail-left{ position:sticky; top:90px; }
+.ki-title-lg{ font-size:2.3rem; font-weight:700; line-height:1.05; letter-spacing:-0.01em; }
+.ki-title-sm{ font-size:1.3rem; font-weight:500; color:var(--muted); line-height:1.1; margin-top:2px; }
+.ki-desc{ font-size:0.86rem; color:var(--muted); line-height:1.6; margin-top:18px; }
+.ki-install{
+  margin-top:22px; display:flex; align-items:center; gap:10px;
+  background:var(--card); border-radius:999px; padding:10px 8px 10px 16px;
+  border:1px solid var(--hair);
+}
+.ki-install .prompt{ color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:0.78rem; flex-shrink:0; }
+.ki-install code{ font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--ink); flex:1; overflow-x:auto; white-space:nowrap; }
+.ki-copy{ background:var(--hair); color:var(--ink); border:none; border-radius:999px; padding:6px 13px; font-size:0.68rem; font-family:'Inter',sans-serif; cursor:pointer; flex-shrink:0; transition:background 0.15s; }
+.ki-copy:hover{ background:#36383c; }
+.ki-meta{ margin-top:22px; display:flex; flex-direction:column; gap:6px; font-size:0.72rem; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+
+/* ---- Demo gallery ---- */
+.ki-gallery{ display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:600px; }
+@media (max-width:560px){ .ki-gallery{ grid-template-columns:1fr; } }
+.ki-card{ background:var(--card); border-radius:14px; overflow:hidden; }
+.ki-card-stage{ aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; position:relative; background:var(--page); margin:10px; border-radius:10px; }
+.ki-card-caption{ padding:10px 14px 13px; border-top:1px solid var(--hair); margin-top:6px; }
+.ki-card-caption .state{ color:var(--ink); font-size:0.78rem; }
+.ki-card-caption .variant{ color:var(--muted); font-size:0.72rem; margin-left:6px; padding-left:6px; border-left:1px solid var(--hair); }
+
+/* demo motifs */
+.demo-pulse-dot{ width:14px; height:14px; border-radius:50%; background:var(--accent); animation:demo-pulse 1.6s ease-in-out infinite; }
+@keyframes demo-pulse{ 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.6); opacity:0.4; } }
+.demo-orbit{ position:relative; width:50px; height:50px; }
+.demo-orbit .core{ position:absolute; inset:18px; border-radius:50%; background:var(--accent); }
+.demo-orbit .moon{ position:absolute; width:7px; height:7px; border-radius:50%; background:var(--ink); top:0; left:21.5px; animation:demo-orbit-spin 2.4s linear infinite; transform-origin:3.5px 25px; }
+@keyframes demo-orbit-spin{ to{ transform:rotate(360deg); } }
+.demo-flow{ display:flex; align-items:center; gap:5px; }
+.demo-flow .node{ width:9px; height:9px; border-radius:50%; background:var(--hair); }
+.demo-flow .node.on{ background:var(--accent); animation:demo-flow-on 1.4s ease-in-out infinite; }
+.demo-flow .node:nth-child(2).on{ animation-delay:0.2s; } .demo-flow .node:nth-child(3).on{ animation-delay:0.4s; } .demo-flow .node:nth-child(4).on{ animation-delay:0.6s; }
+@keyframes demo-flow-on{ 0%,100%{opacity:0.25;} 50%{opacity:1;} }
+.demo-bars{ display:flex; align-items:flex-end; gap:4px; height:40px; }
+.demo-bars span{ width:6px; background:var(--accent); border-radius:2px; animation:demo-bar 1.3s ease-in-out infinite; }
+.demo-bars span:nth-child(1){ height:40%; animation-delay:0s; } .demo-bars span:nth-child(2){ height:80%; animation-delay:0.15s; }
+.demo-bars span:nth-child(3){ height:55%; animation-delay:0.3s; } .demo-bars span:nth-child(4){ height:95%; animation-delay:0.45s; }
+.demo-bars span:nth-child(5){ height:65%; animation-delay:0.6s; }
+@keyframes demo-bar{ 0%,100%{ transform:scaleY(0.6); } 50%{ transform:scaleY(1); } }
+.demo-ring{ width:44px; height:44px; border-radius:50%; border:3px solid var(--hair); border-top-color:var(--accent); animation:demo-spin 1.1s linear infinite; }
+@keyframes demo-spin{ to{ transform:rotate(360deg); } }
+.demo-toggle{ width:38px; height:20px; border-radius:999px; background:var(--hair); position:relative; }
+.demo-toggle::after{ content:''; position:absolute; width:14px; height:14px; border-radius:50%; background:var(--accent); top:3px; left:3px; animation:demo-toggle-slide 2s ease-in-out infinite; }
+@keyframes demo-toggle-slide{ 0%,40%{ left:3px; } 60%,100%{ left:21px; } }
+.demo-type{ font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--accent); }
+.demo-type::after{ content:'|'; animation:ki-pulse 0.85s steps(1) infinite; }
+.demo-grid-fill{ display:grid; grid-template-columns:repeat(4,1fr); gap:3px; width:44px; }
+.demo-grid-fill span{ width:9px; height:9px; background:var(--hair); border-radius:2px; animation:demo-grid-fill 2.4s ease-in-out infinite; }
+.demo-grid-fill span:nth-child(odd){ animation-delay:0.3s; } .demo-grid-fill span:nth-child(3n){ animation-delay:0.6s; }
+@keyframes demo-grid-fill{ 0%,100%{ background:var(--hair); } 50%{ background:var(--accent); } }
+.demo-wave{ display:flex; align-items:center; gap:3px; height:30px; }
+.demo-wave span{ width:3px; background:var(--accent); border-radius:2px; animation:demo-wave 1s ease-in-out infinite; }
+.demo-wave span:nth-child(1){ animation-delay:0s; } .demo-wave span:nth-child(2){ animation-delay:0.1s; }
+.demo-wave span:nth-child(3){ animation-delay:0.2s; } .demo-wave span:nth-child(4){ animation-delay:0.3s; }
+.demo-wave span:nth-child(5){ animation-delay:0.4s; } .demo-wave span:nth-child(6){ animation-delay:0.5s; }
+.demo-wave span:nth-child(7){ animation-delay:0.6s; }
+@keyframes demo-wave{ 0%,100%{ height:6px; } 50%{ height:28px; } }
+.demo-check{ width:40px; height:40px; border-radius:50%; border:2px solid var(--accent); display:flex; align-items:center; justify-content:center; }
+.demo-check svg{ width:18px; height:18px; stroke:var(--accent); animation:demo-check-draw 1.8s ease-in-out infinite; }
+@keyframes demo-check-draw{ 0%,20%{ stroke-dasharray:20; stroke-dashoffset:20; } 50%,100%{ stroke-dashoffset:0; } }
+
+/* ---- Right context rail ---- */
+.ki-rail-right{ position:sticky; top:90px; }
+.ki-chat{ background:var(--accent-dim); border:1px solid rgba(122,155,181,0.3); border-radius:14px 14px 14px 4px; padding:14px 16px; font-size:0.82rem; color:var(--ink); }
+.ki-log{ margin-top:14px; background:var(--card); border-radius:12px; padding:14px 16px; font-family:'JetBrains Mono',monospace; font-size:0.72rem; line-height:1.9; color:var(--muted); }
+.ki-log .g{ color:var(--green); } .ki-log .r{ color:var(--red); } .ki-log .b{ color:var(--blue); }
+.ki-status{ margin-top:12px; display:flex; align-items:center; gap:8px; font-size:0.74rem; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+
+/* ---- Docs-style sections ---- */
+.ki-section{ max-width:600px; margin:0 auto; padding:70px 28px 0; }
+.ki-h2{ font-size:0.95rem; font-weight:600; color:var(--ink); }
+.ki-h2 .suffix{ color:var(--muted); font-weight:400; }
+.ki-sub{ font-size:0.82rem; color:var(--muted); margin-top:6px; line-height:1.6; }
+.ki-tabs{ display:flex; gap:6px; margin-top:20px; flex-wrap:wrap; }
+.ki-tab{ font-family:'JetBrains Mono',monospace; font-size:0.74rem; padding:6px 13px; border-radius:8px; color:var(--muted); cursor:pointer; border:1px solid transparent; transition:all 0.15s; }
+.ki-tab.active{ color:var(--ink); border-color:var(--hair); background:var(--card); }
+.ki-cmdbar{ margin-top:14px; background:var(--card-hi); border:1px solid var(--hair); border-radius:10px; padding:13px 16px; display:flex; align-items:center; gap:10px; }
+.ki-cmdbar .prompt{ color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:0.8rem; }
+.ki-cmdbar code{ font-family:'JetBrains Mono',monospace; font-size:0.8rem; flex:1; }
+.ki-code{ margin-top:16px; background:var(--card); border-radius:12px; padding:18px 20px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; line-height:1.8; overflow-x:auto; }
+.ki-code .k{ color:var(--purple); } .ki-code .s{ color:var(--orange); } .ki-code .t{ color:var(--blue); } .ki-code .c{ color:var(--muted); }
+.ki-table{ width:100%; margin-top:18px; border-collapse:collapse; font-size:0.8rem; }
+.ki-table th{ text-align:left; font-weight:500; color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; padding:10px 10px; border-top:1px solid var(--hair); border-bottom:1px solid var(--hair); }
+.ki-table td{ padding:13px 10px; border-bottom:1px solid var(--hair); vertical-align:top; }
+.ki-table td.p{ font-family:'JetBrains Mono',monospace; color:var(--ink); }
+.ki-table td.ty{ font-family:'JetBrains Mono',monospace; color:var(--accent); font-size:0.76rem; }
+.ki-table td.d{ color:var(--muted); font-size:0.76rem; }
+.ki-link{ color:var(--accent); text-decoration:underline; text-underline-offset:2px; }
+
+.ki-consult-box{ margin-top:26px; display:flex; align-items:center; gap:16px; background:var(--card); border:1px solid var(--hair); border-radius:14px; padding:16px; flex-wrap:wrap; }
+.ki-consult-box img{ width:72px; height:72px; border-radius:10px; flex-shrink:0; }
+.ki-consult-box .t{ font-size:0.8rem; color:var(--ink); }
+.ki-consult-box .m{ font-size:0.72rem; color:var(--muted); margin-top:3px; }
+
+.ki-pkg-tabs{ display:flex; gap:4px; margin-top:20px; background:var(--card); border-radius:10px; padding:4px; width:fit-content; }
+.ki-pkg-tab{ font-family:'JetBrains Mono',monospace; font-size:0.72rem; padding:6px 14px; border-radius:7px; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+.ki-pkg-tab.active{ color:var(--ink); background:var(--card-hi); border:1px solid var(--hair); }
+.ki-example-label{ display:inline-block; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); border:1px solid var(--hair); border-radius:999px; padding:3px 10px; margin-bottom:10px; }
+.ki-lang-toggle{ display:flex; gap:4px; margin-top:20px; }
+.ki-lang-tab{ font-family:'JetBrains Mono',monospace; font-size:0.72rem; padding:5px 13px; border-radius:7px; border:1px solid var(--hair); color:var(--muted); cursor:pointer; }
+.ki-lang-tab.active{ color:var(--ink); background:var(--card); border-color:var(--accent); }
+.ki-footer{ max-width:1240px; margin:0 auto; padding:90px 28px 50px; }
+.ki-footer a{ font-family:'JetBrains Mono',monospace; font-size:0.76rem; color:var(--muted); }
+.ki-footer a:hover{ color:var(--ink); }
+</style>
 </head>
-<body class="font-sans antialiased">
+<body>
 
-  <!-- Navigation (same as Club, with Intelligence active) -->
-  <header class="fixed top-0 inset-x-0 z-50 bg-club-black/80 backdrop-blur-md border-b gold-border">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-3">
-        <img src="assets/logo.jpg" alt="Elite Club" class="w-9 h-9 rounded-full object-cover object-top border border-club-gold/40">
-        <span class="font-serif text-lg tracking-wide">Elite Club</span>
-      </a>
-      <nav class="hidden md:flex items-center gap-8 text-sm text-club-ivory/70">
-        <a href="index.html#charter" class="hover:text-club-gold transition">Charter</a>
-        <a href="index.html#membership" class="hover:text-club-gold transition">Membership</a>
-        <a href="index.html#calendar" class="hover:text-club-gold transition">Calendar</a>
-        <a href="index.html#hall" class="hover:text-club-gold transition">Members’ Hall</a>
-        <a href="#" class="text-club-steel">Intelligence</a>
-      </nav>
-      <a href="index.html#request-membership" class="hidden md:inline-flex px-5 py-2 text-sm border border-club-gold/50 text-club-gold rounded-full hover:bg-club-gold/10 transition">
-        Request Membership
-      </a>
-      <button id="mobileMenuBtn" class="md:hidden text-club-ivory/80" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
+<nav class="ki-nav" style="position:relative;">
+  <div class="ki-nav-left">
+    <a href="index.html" class="ki-wordmark">elite club</a>
+    <a href="index.html#charter" class="hidden sm:inline">Charter</a>
+    <a href="index.html#membership" class="hidden sm:inline">Membership</a>
+    <a href="index.html#calendar" class="hidden md:inline">Calendar</a>
+  </div>
+  <div class="ki-nav-center">
+    <span style="font-size:0.92rem; font-weight:600;">Intelligence</span>
+    <span class="ki-badge">AI</span>
+    <span class="ki-badge">by Elite Club</span>
+  </div>
+  <div class="ki-nav-right">
+    <a href="#consult" class="ki-cta-circled hidden sm:inline">Book a call</a>
+    <a href="index.html#members">Sign In</a>
+    <span class="ki-star"><span class="ki-live-dot"></span> 100+ automated</span>
+  </div>
+</nav>
+
+<div class="ki-layout">
+  <aside class="ki-rail-left">
+    <div class="ki-title-lg">Intelligence</div>
+    <div class="ki-title-sm">AI Automation &amp; Agents</div>
+    <p class="ki-desc">We design automation that brings clarity and precision to how your company operates. 100+ businesses automated, 3 core capabilities, one studio behind every build.</p>
+    <div class="ki-install">
+      <span class="prompt">$</span>
+      <code id="kiInstallCmd">book-consultation --free</code>
+      <button class="ki-copy" id="kiCopyBtn">Copy</button>
     </div>
-    <!-- Mobile menu panel -->
-    <div id="mobileMenu" class="hidden md:hidden border-t gold-border bg-club-black/95 backdrop-blur-md">
-      <nav class="flex flex-col px-6 py-4 gap-4 text-sm text-club-ivory/80">
-        <a href="index.html#charter" class="hover:text-club-gold transition">Charter</a>
-        <a href="index.html#membership" class="hover:text-club-gold transition">Membership</a>
-        <a href="index.html#calendar" class="hover:text-club-gold transition">Calendar</a>
-        <a href="index.html#hall" class="hover:text-club-gold transition">Members' Hall</a>
-        <a href="#" class="text-club-steel">Intelligence</a>
-        <a href="index.html#request-membership" class="mt-2 px-5 py-2 text-center border border-club-gold/50 text-club-gold rounded-full hover:bg-club-gold/10 transition">Request Membership</a>
-      </nav>
+    <div class="ki-meta">
+      <span>Studio &nbsp;—&nbsp; Oai's Studio</span>
+      <span>Est. &nbsp;—&nbsp; 2026</span>
+      <span>Terms &nbsp;—&nbsp; By application</span>
     </div>
-  </header>
+  </aside>
 
-  <!-- Hero -->
-  <section class="pt-32 pb-24 px-6">
-    <div class="max-w-4xl mx-auto text-center">
-      <p class="text-club-steel/80 text-sm tracking-[0.25em] uppercase mb-6">Elite Club Intelligence</p>
-      <h1 class="typo-headline font-serif text-4xl md:text-6xl leading-tight mb-8">
-        Clear. Precise.<br>
-        <span class="text-club-steel">Automated.</span>
-      </h1>
-      <p class="typo-typeline text-lg md:text-xl text-club-ivory/70 max-w-2xl mx-auto mb-12 leading-relaxed">
-        We design automation that brings clarity, precision, and efficiency to the way your company operates — with the same standards of discretion that define the Club.
-      </p>
-      <a href="#consult" class="inline-flex px-8 py-3.5 bg-club-steel text-club-black font-medium rounded-full hover:bg-club-steel/90 transition">
-        Request a Consultation
-      </a>
+  <main>
+    <div class="ki-gallery">
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-pulse-dot"></div></div><div class="ki-card-caption"><span class="state">Workflow Trigger</span><span class="variant">Email → Action</span></div></div>
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-flow"><span class="node on"></span><span class="node on"></span><span class="node on"></span><span class="node"></span></div></div><div class="ki-card-caption"><span class="state">Approval Routing</span><span class="variant">Multi-step</span></div></div>
+
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-ring"></div></div><div class="ki-card-caption"><span class="state">Scheduled Sync</span><span class="variant">Nightly</span></div></div>
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg></div></div><div class="ki-card-caption"><span class="state">Error Retry</span><span class="variant">Auto-recover</span></div></div>
+
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-orbit"><div class="core"></div><div class="moon"></div></div></div><div class="ki-card-caption"><span class="state">CRM Connector</span><span class="variant">Two-way sync</span></div></div>
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-toggle"></div></div><div class="ki-card-caption"><span class="state">API Bridge</span><span class="variant">Webhook</span></div></div>
+
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-bars"><span></span><span></span><span></span><span></span><span></span></div></div><div class="ki-card-caption"><span class="state">Data Pipeline</span><span class="variant">ETL</span></div></div>
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-grid-fill"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><div class="ki-card-caption"><span class="state">Auth Handshake</span><span class="variant">OAuth</span></div></div>
+
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-type">thinking…</div></div><div class="ki-card-caption"><span class="state">Agent Reasoning</span><span class="variant">Multi-step</span></div></div>
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><div class="ki-card-caption"><span class="state">Tool Calling</span><span class="variant">Live</span></div></div>
+
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-pulse-dot" style="background:var(--muted);"></div></div><div class="ki-card-caption"><span class="state">Human-in-Loop</span><span class="variant">Review gate</span></div></div>
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-orbit"><div class="core" style="background:var(--muted);"></div><div class="moon"></div></div></div><div class="ki-card-caption"><span class="state">Memory Recall</span><span class="variant">Context</span></div></div>
+
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-bars"><span style="background:var(--muted);"></span><span></span><span style="background:var(--muted);"></span><span></span><span style="background:var(--muted);"></span></div></div><div class="ki-card-caption"><span class="state">Reporting Digest</span><span class="variant">Daily</span></div></div>
+      <div class="ki-card"><div class="ki-card-stage"><div class="demo-ring" style="border-top-color:var(--muted);"></div></div><div class="ki-card-caption"><span class="state">Lead Scoring</span><span class="variant">Realtime</span></div></div>
     </div>
-  </section>
+  </main>
 
-  <!-- Stats / Social proof -->
-  <section class="py-12 px-6 border-y gold-border">
-    <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-center items-center gap-12 md:gap-24 text-center">
-      <div>
-        <p class="text-3xl font-medium text-club-ivory">Personal</p>
-        <p class="text-sm text-club-ivory/50 mt-1">Every request read by us</p>
-      </div>
-      <div>
-        <p class="text-3xl font-medium text-club-ivory">Members first</p>
-        <p class="text-sm text-club-ivory/50 mt-1">Preferred access & pricing</p>
-      </div>
-      <div>
-        <p class="text-3xl font-medium text-club-ivory">End-to-end</p>
-        <p class="text-sm text-club-ivory/50 mt-1">From workflow to agent</p>
-      </div>
+  <aside class="ki-rail-right">
+    <div class="ki-chat">"Can you route approvals to the right person automatically?"</div>
+    <div class="ki-log">
+      <div>Read <span class="b">inbox/approvals</span></div>
+      <div>Classified <span class="g">42</span> requests</div>
+      <div>Updated routing rules <span class="g">+2</span> <span class="r">−1</span></div>
+      <div>Bash: notify-slack --channel ops</div>
+      <div>Routed <span class="g">3</span> urgent → ops@team</div>
     </div>
-  </section>
+    <div class="ki-status"><span class="ki-live-dot"></span> Working</div>
+  </aside>
+</div>
 
-  <!-- Services -->
-  <section class="py-32 px-6">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-20">
-        <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">What We Do</p>
-        <h2 class="typo-headline font-serif text-4xl md:text-5xl">Our Services</h2>
-      </div>
+<section class="ki-section">
+  <h2 class="ki-h2">Getting Started</h2>
+  <p class="ki-sub">Every engagement starts the same way — a short call, a clear plan, then we build.</p>
+  <div class="ki-tabs">
+    <span class="ki-tab active">Automation</span>
+    <span class="ki-tab">Integration</span>
+    <span class="ki-tab">Agent Dev</span>
+    <span class="ki-tab">Consulting</span>
+  </div>
+  <div class="ki-cmdbar">
+    <span class="prompt">$</span>
+    <code>request --free-consultation</code>
+    <a href="#consult" class="ki-copy" style="text-decoration:none;">Book →</a>
+  </div>
 
-      <div class="grid md:grid-cols-3 gap-8">
-        <!-- AI Automation -->
-        <div class="p-8 border steel-border rounded-2xl card-hover">
-          <div class="w-12 h-12 rounded-full border border-club-steel/30 flex items-center justify-center text-club-steel mb-6 text-sm font-medium">01</div>
-          <h3 class="font-serif text-2xl mb-4">AI Automation</h3>
-          <p class="text-club-ivory/60 leading-relaxed mb-6">
-            We build automated workflows that take repetitive work off your plate, so your team can focus on what actually moves the business.
-          </p>
-          <ul class="space-y-2 text-sm text-club-ivory/50">
-            <li>• Process mapping & redesign</li>
-            <li>• Custom workflow engines</li>
-            <li>• Monitoring & iteration</li>
-          </ul>
-        </div>
-
-        <!-- AI Integration -->
-        <div class="p-8 border steel-border rounded-2xl card-hover">
-          <div class="w-12 h-12 rounded-full border border-club-steel/30 flex items-center justify-center text-club-steel mb-6 text-sm font-medium">02</div>
-          <h3 class="font-serif text-2xl mb-4">AI Integration</h3>
-          <p class="text-club-ivory/60 leading-relaxed mb-6">
-            We connect AI directly into the tools you already use, so it works inside your existing operations — not around them.
-          </p>
-          <ul class="space-y-2 text-sm text-club-ivory/50">
-            <li>• CRM, ERP & internal tools</li>
-            <li>• Data pipelines</li>
-            <li>• Secure API architecture</li>
-          </ul>
-        </div>
-
-        <!-- AI Agent Development -->
-        <div class="p-8 border steel-border rounded-2xl card-hover">
-          <div class="w-12 h-12 rounded-full border border-club-steel/30 flex items-center justify-center text-club-steel mb-6 text-sm font-medium">03</div>
-          <h3 class="font-serif text-2xl mb-4">AI Agent Development</h3>
-          <p class="text-club-ivory/60 leading-relaxed mb-6">
-            We design and build custom AI agents that carry out real tasks on your behalf, end to end.
-          </p>
-          <ul class="space-y-2 text-sm text-club-ivory/50">
-            <li>• Task-specific agents</li>
-            <li>• Multi-step reasoning</li>
-            <li>• Human-in-the-loop controls</li>
-          </ul>
-        </div>
-      </div>
+  <div class="ki-consult-box">
+    <img src="assets/whatsapp-qr.jpg" alt="Scan to message Elite Club Intelligence on WhatsApp">
+    <div>
+      <div class="t">Scan to chat with us on WhatsApp</div>
+      <div class="m">Tell us what you're trying to automate — free, no obligation.</div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Approach -->
-  <section class="py-24 px-6 border-t gold-border">
-    <div class="max-w-5xl mx-auto">
-      <div class="grid md:grid-cols-2 gap-16 items-center">
-        <div>
-          <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">How We Work</p>
-          <h2 class="typo-headline font-serif text-4xl mb-6">Precision over volume</h2>
-          <p class="typo-typeline text-club-ivory/70 leading-relaxed text-lg mb-8">
-            We take on a limited number of engagements. Every system is designed with clarity, security, and long-term maintainability in mind — never as a black box.
-          </p>
-          <ul class="space-y-4 text-club-ivory/60">
-            <li class="flex gap-3"><span class="text-club-steel">→</span> Deep discovery before any build</li>
-            <li class="flex gap-3"><span class="text-club-steel">→</span> Transparent architecture decisions</li>
-            <li class="flex gap-3"><span class="text-club-steel">→</span> Members receive priority scheduling</li>
-          </ul>
-        </div>
-        <div class="border steel-border rounded-2xl p-10 bg-club-ivory/[0.02]">
-          <p class="font-serif text-xl italic text-club-ivory/80 leading-relaxed mb-6">
-            “We do not sell tools. We install capability.”
-          </p>
-          <p class="text-sm text-club-steel/70">— Elite Club Intelligence</p>
-        </div>
-      </div>
-    </div>
-  </section>
+<section class="ki-section" id="consult">
+  <h2 class="ki-h2">What You Get</h2>
+  <p class="ki-sub">A typical engagement, start to finish.</p>
+  <div class="ki-tabs">
+    <span class="ki-tab active" data-tier="startup">Startup</span>
+    <span class="ki-tab" data-tier="enterprise">Enterprise</span>
+  </div>
+  <pre class="ki-code" id="kiTierStartup"><span class="k">engagement</span>:
+  <span class="k">discovery</span>: <span class="s">"3–5 days"</span>
+  <span class="k">build</span>: <span class="s">"1–2 weeks"</span>
+  <span class="k">support</span>: <span class="s">"30 days included"</span>
+  <span class="k">team</span>: [<span class="s">"automation lead"</span>]
+  <span class="k">price</span>: <span class="t">custom quote</span></pre>
+  <pre class="ki-code" id="kiTierEnterprise" style="display:none;"><span class="k">engagement</span>:
+  <span class="k">discovery</span>: <span class="s">"1–2 weeks"</span>
+  <span class="k">build</span>: <span class="s">"3–6 weeks"</span>
+  <span class="k">support</span>: <span class="s">"ongoing retainer"</span>
+  <span class="k">team</span>: [<span class="s">"automation lead"</span>, <span class="s">"integration engineer"</span>]
+  <span class="k">price</span>: <span class="t">custom quote</span></pre>
+</section>
 
-  <!-- Selected Work -->
-  <section class="py-24 px-6 border-t gold-border">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16">
-        <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">Selected Work</p>
-        <h2 class="typo-headline font-serif text-4xl md:text-5xl">What we build</h2>
-      </div>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="p-8 border steel-border rounded-2xl card-hover">
-          <div class="flex items-center justify-between mb-6">
-            <div class="w-12 h-12 rounded-full border border-club-steel/30 flex items-center justify-center text-club-steel text-sm font-medium">01</div>
-            <span class="text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full border border-club-steel/30 text-club-steel/80">Live</span>
-          </div>
-          <h3 class="font-serif text-2xl mb-4">Elite Club Members’ Platform</h3>
-          <p class="text-club-ivory/60 leading-relaxed mb-6">A private members’ club site with Google sign-in, tiered memberships, event calendar and ticketing, and a manual payment-review workflow for the admin.</p>
-          <ul class="space-y-2 text-sm text-club-ivory/50">
-            <li>• Firebase auth &amp; database</li>
-            <li>• UPI and crypto payment verification</li>
-            <li>• Admin approvals, tickets &amp; member directory</li>
-          </ul>
-          <a href="index.html" class="inline-flex mt-6 text-sm text-club-steel hover:text-club-steel/80 transition">View the live site →</a>
-        </div>
-        <div class="p-8 border steel-border rounded-2xl card-hover">
-          <div class="flex items-center justify-between mb-6">
-            <div class="w-12 h-12 rounded-full border border-club-steel/30 flex items-center justify-center text-club-steel text-sm font-medium">02</div>
-            <span class="text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full border border-club-steel/30 text-club-steel/80">Concept</span>
-          </div>
-          <h3 class="font-serif text-2xl mb-4">Private Advisory Firm Website</h3>
-          <p class="text-club-ivory/60 leading-relaxed mb-6">A restrained, high-trust website for a boutique advisory practice: service pages, team profiles and a discreet enquiry flow.</p>
-          <ul class="space-y-2 text-sm text-club-ivory/50">
-            <li>• Editorial typography &amp; layout</li>
-            <li>• Consultation booking flow</li>
-            <li>• Mobile-first performance</li>
-          </ul>
-        </div>
-        <div class="p-8 border steel-border rounded-2xl card-hover">
-          <div class="flex items-center justify-between mb-6">
-            <div class="w-12 h-12 rounded-full border border-club-steel/30 flex items-center justify-center text-club-steel text-sm font-medium">03</div>
-            <span class="text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full border border-club-steel/30 text-club-steel/80">Concept</span>
-          </div>
-          <h3 class="font-serif text-2xl mb-4">Luxury Brand Portfolio Page</h3>
-          <p class="text-club-ivory/60 leading-relaxed mb-6">A showcase page for a premium brand with full-bleed imagery, collection pages and a simple WhatsApp contact path.</p>
-          <ul class="space-y-2 text-sm text-club-ivory/50">
-            <li>• Gallery &amp; lookbook layout</li>
-            <li>• WhatsApp enquiry integration</li>
-            <li>• Fast static hosting</li>
-          </ul>
-        </div>
-      </div>
-      <p class="text-sm text-club-ivory/40 text-center mt-10">Items marked “Concept” are design explorations, not client engagements.</p>
-    </div>
-  </section>
+<section class="ki-section">
+  <h2 class="ki-h2">Engagement Phases <span class="suffix">(Every project)</span></h2>
+  <table class="ki-table">
+    <thead><tr><th>Phase</th><th>Duration</th><th>Deliverable</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="p">discovery</td><td class="ty">call</td><td class="d">Scoped plan</td><td class="d">We map what's manual today and where automation actually helps.</td></tr>
+      <tr><td class="p">build</td><td class="ty">sprint</td><td class="d">Working automation</td><td class="d">You see a real, running version early — not a slide deck.</td></tr>
+      <tr><td class="p">launch</td><td class="ty">handoff</td><td class="d">Live in production</td><td class="d">Deployed inside your existing tools, monitored from day one.</td></tr>
+      <tr><td class="p">support</td><td class="ty">ongoing</td><td class="d">Monitoring + fixes</td><td class="d">We stay available as your workflows evolve.</td></tr>
+    </tbody>
+  </table>
+</section>
 
-  <!-- Consultation CTA -->
-  <section id="consult" class="py-32 px-6">
-    <div class="max-w-2xl mx-auto text-center">
-      <p class="text-club-steel/70 text-sm tracking-widest uppercase mb-4">Next Step</p>
-      <h2 class="typo-headline font-serif text-4xl mb-6">Request a Consultation</h2>
-      <p class="typo-typeline text-club-ivory/60 mb-12 leading-relaxed">
-        Tell us briefly about the processes you want to improve. We review every request personally and respond within a few days.
-      </p>
-      <div class="inline-flex flex-col items-center gap-4 p-8 border steel-border rounded-2xl">
-        <p class="text-club-steel/80 text-sm tracking-widest uppercase">Scan to Chat on WhatsApp</p>
-        <img src="assets/whatsapp-qr.jpg" alt="Scan to message us on WhatsApp for a free consultation" class="w-44 h-44 rounded-xl">
-      </div>
-      <p class="text-sm text-club-ivory/40 mt-8">Members of Elite Club receive preferred access and terms.</p>
-    </div>
-  </section>
+<section class="ki-section">
+  <h2 class="ki-h2">Tools We Integrate</h2>
+  <p class="ki-sub">Every build connects to the tools you already use — no forcing your team onto something new. <a href="#consult" class="ki-link">Tell us what you're running</a> and we'll confirm compatibility.</p>
+  <pre class="ki-code"><span class="k">import</span> { Gmail, Slack, Notion, Airtable, Salesforce, HubSpot, Zapier, GoogleSheets } <span class="k">from</span> <span class="s">"@elite-club/integrations"</span></pre>
+</section>
 
-  <!-- Back to Club -->
-  <section class="py-16 px-6 border-t gold-border">
-    <div class="max-w-4xl mx-auto text-center">
-      <p class="text-club-ivory/50 mb-6">Intelligence is an extension of the Club.</p>
-      <a href="index.html" class="inline-flex items-center gap-2 text-club-gold hover:text-club-gold/80 transition">
-        ← Return to Elite Club
-      </a>
-    </div>
-  </section>
+<section class="ki-section" style="padding-top:90px; border-top:1px solid var(--hair); margin-top:40px;">
+  <span class="ki-example-label">From Our Toolkit</span>
+  <h2 class="ki-h2">Installation</h2>
+  <p class="ki-sub">A small internal component we built for agent interfaces — one example of the kind of tools we ship for clients.</p>
+  <div class="ki-pkg-tabs" id="kiPkgTabs">
+    <span class="ki-pkg-tab active" data-pm="npm">npm</span>
+    <span class="ki-pkg-tab" data-pm="pnpm">pnpm</span>
+    <span class="ki-pkg-tab" data-pm="yarn">yarn</span>
+    <span class="ki-pkg-tab" data-pm="bun">bun</span>
+  </div>
+  <div class="ki-cmdbar">
+    <span class="prompt">$</span>
+    <code id="kiPkgCmd">npm install @elite-club/agent-kit</code>
+    <button class="ki-copy" id="kiPkgCopy">Copy</button>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer class="py-16 px-6 border-t gold-border">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-      <div class="flex items-center gap-3">
-        <img src="assets/logo.jpg" alt="Elite Club" class="w-8 h-8 rounded-full object-cover object-top border border-club-gold/40">
-        <span class="font-serif">Elite Club</span>
-      </div>
-      <p class="text-sm text-club-ivory/40">Intelligence · Est. 2026</p>
-      <div class="flex gap-6 text-sm text-club-ivory/50">
-        <a href="index.html" class="hover:text-club-gold transition">Club Home</a>
-        <a href="index.html#request-membership" class="hover:text-club-gold transition">Membership</a>
-      </div>
-    </div>
-  </footer>
-  <script>
-    (function(){
-      const btn = document.getElementById('mobileMenuBtn');
-      const menu = document.getElementById('mobileMenu');
-      if (!btn || !menu) return;
-      function closeMenu(){
-        menu.classList.add('hidden');
-        btn.setAttribute('aria-expanded', 'false');
-      }
-      function openMenu(){
-        menu.classList.remove('hidden');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-      btn.addEventListener('click', () => {
-        if (menu.classList.contains('hidden')) openMenu(); else closeMenu();
+<section class="ki-section" style="padding-top:60px;">
+  <h2 class="ki-h2">Usage</h2>
+  <p class="ki-sub">Drop it into any interface that needs a live "agent is working" indicator.</p>
+  <div class="ki-lang-toggle" id="kiLangToggle">
+    <span class="ki-lang-tab active" data-lang="react">React</span>
+    <span class="ki-lang-tab" data-lang="js">JS</span>
+  </div>
+  <pre class="ki-code" id="kiCodeReact"><span class="k">import</span> { AgentOrb } <span class="k">from</span> <span class="s">"@elite-club/agent-kit"</span>
+
+<span class="k">export default function</span> <span class="t">App</span>() {
+  <span class="k">return</span> (
+    &lt;<span class="t">AgentOrb</span> <span class="c">state</span>=<span class="s">"thinking"</span> <span class="c">size</span>={48} <span class="c">speed</span>={1.2} /&gt;
+  );
+}</pre>
+  <pre class="ki-code" id="kiCodeJs" style="display:none;"><span class="k">import</span> { createAgentOrb } <span class="k">from</span> <span class="s">"@elite-club/agent-kit"</span>
+
+<span class="k">const</span> orb = <span class="t">createAgentOrb</span>(<span class="s">"#orb-root"</span>, {
+  <span class="c">state</span>: <span class="s">"thinking"</span>,
+  <span class="c">size</span>: 48,
+  <span class="c">speed</span>: 1.2
+});
+
+orb.mount();</pre>
+</section>
+
+<section class="ki-section" style="padding-top:60px;">
+  <h2 class="ki-h2">Props Reference <span class="suffix">(All optional)</span></h2>
+  <table class="ki-table">
+    <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="p">state</td><td class="ty">"idle" | "thinking" | "done"</td><td class="d">"idle"</td><td class="d">Current status the orb reflects.</td></tr>
+      <tr><td class="p">size</td><td class="ty">number</td><td class="d">32</td><td class="d">Diameter in pixels.</td></tr>
+      <tr><td class="p">color</td><td class="ty">string</td><td class="d">"#7A9BB5"</td><td class="d">Accent color of the orb.</td></tr>
+      <tr><td class="p">speed</td><td class="ty">number</td><td class="d">1</td><td class="d">Animation speed multiplier.</td></tr>
+      <tr><td class="p">onComplete</td><td class="ty">() =&gt; void</td><td class="d">undefined</td><td class="d">Fires once, when state transitions to "done".</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer class="ki-footer">
+  <a href="index.html">../elite-club/index.html</a>
+</footer>
+
+<script>
+(function(){
+  const copyBtn = document.getElementById('kiCopyBtn');
+  if (copyBtn){
+    copyBtn.addEventListener('click', () => {
+      const text = "Hi — I'd like to book a free consultation to talk about automating part of our business. (via Elite Club Intelligence)";
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1500);
       });
-      menu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeMenu();
+    });
+  }
+  const tierTabs = document.querySelectorAll('.ki-tab[data-tier]');
+  const startup = document.getElementById('kiTierStartup');
+  const enterprise = document.getElementById('kiTierEnterprise');
+  tierTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tierTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const isStartup = tab.getAttribute('data-tier') === 'startup';
+      startup.style.display = isStartup ? 'block' : 'none';
+      enterprise.style.display = isStartup ? 'none' : 'block';
+    });
+  });
+  document.querySelectorAll('.ki-tab:not([data-tier])').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const siblings = tab.parentElement.querySelectorAll('.ki-tab');
+      siblings.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  const pkgCommands = {
+    npm: 'npm install @elite-club/agent-kit',
+    pnpm: 'pnpm add @elite-club/agent-kit',
+    yarn: 'yarn add @elite-club/agent-kit',
+    bun: 'bun add @elite-club/agent-kit'
+  };
+  const pkgTabs = document.querySelectorAll('#kiPkgTabs .ki-pkg-tab');
+  const pkgCmdEl = document.getElementById('kiPkgCmd');
+  pkgTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      pkgTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      pkgCmdEl.textContent = pkgCommands[tab.getAttribute('data-pm')];
+    });
+  });
+  const pkgCopyBtn = document.getElementById('kiPkgCopy');
+  if (pkgCopyBtn){
+    pkgCopyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(pkgCmdEl.textContent).then(() => {
+        pkgCopyBtn.textContent = 'Copied';
+        setTimeout(() => { pkgCopyBtn.textContent = 'Copy'; }, 1500);
       });
-    })();
-  </script>
+    });
+  }
 
-  <script>
-    (function(){
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const FRAME_STAGGER = 5 / 30; // 5 frames at 30fps, matching the AE expression
-
-      function splitIntoLetters(el){
-        const letters = [];
-        el.setAttribute('data-typo-source', el.textContent);
-        function processNode(node, container){
-          if (node.nodeType === Node.TEXT_NODE){
-            const parts = node.textContent.split(/(\s+)/);
-            parts.forEach(part => {
-              if (part === '') return;
-              if (/^\s+$/.test(part)){
-                container.appendChild(document.createTextNode(part));
-                return;
-              }
-              const wordSpan = document.createElement('span');
-              wordSpan.className = 'typo-word';
-              [...part].forEach(ch => {
-                const letterSpan = document.createElement('span');
-                letterSpan.className = 'typo-letter';
-                letterSpan.textContent = ch;
-                wordSpan.appendChild(letterSpan);
-                letters.push(letterSpan);
-              });
-              container.appendChild(wordSpan);
-            });
-          } else if (node.nodeType === Node.ELEMENT_NODE){
-            const clone = node.cloneNode(false);
-            container.appendChild(clone);
-            Array.from(node.childNodes).forEach(child => processNode(child, clone));
-          }
-        }
-        const fragment = document.createDocumentFragment();
-        Array.from(el.childNodes).forEach(child => processNode(child, fragment));
-        el.innerHTML = '';
-        el.appendChild(fragment);
-        return letters;
-      }
-
-      function animateHeadline(headlineEl, onDone){
-        const letters = splitIntoLetters(headlineEl);
-        if (reduceMotion){
-          letters.forEach(l => l.classList.add('in'));
-          if (onDone) onDone();
-          return;
-        }
-        letters.forEach((span, i) => {
-          span.style.transitionDelay = (i * FRAME_STAGGER).toFixed(3) + 's';
-        });
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          letters.forEach(span => span.classList.add('in'));
-        }));
-        const perLetterDuration = 0.42;
-        const totalMs = (Math.max(letters.length - 1, 0) * FRAME_STAGGER + perLetterDuration) * 1000;
-        if (onDone) setTimeout(onDone, totalMs);
-      }
-
-      function typewrite(el){
-        const text = (el.getAttribute('data-typo-source') || el.textContent).trim();
-        el.setAttribute('data-typo-source', text);
-        el.textContent = '';
-        const cursor = document.createElement('span');
-        cursor.className = 'typo-cursor';
-        el.appendChild(cursor);
-        if (reduceMotion){
-          el.textContent = text;
-          return;
-        }
-        let i = 0;
-        const speed = 22;
-        (function step(){
-          el.textContent = text.slice(0, i);
-          el.appendChild(cursor);
-          i++;
-          if (i <= text.length){
-            setTimeout(step, speed);
-          } else {
-            setTimeout(() => cursor.remove(), 500);
-          }
-        })();
-      }
-
-      const headlines = document.querySelectorAll('.typo-headline');
-      if (!('IntersectionObserver' in window) || reduceMotion){
-        headlines.forEach(h => {
-          const letters = splitIntoLetters(h);
-          letters.forEach(l => l.classList.add('in'));
-          const next = h.nextElementSibling;
-          if (next && next.classList.contains('typo-typeline')) typewrite(next);
-        });
-      } else {
-        const headlineObserver = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            headlineObserver.unobserve(entry.target);
-            const next = entry.target.nextElementSibling;
-            const hasTypeline = next && next.classList.contains('typo-typeline');
-            animateHeadline(entry.target, hasTypeline ? () => typewrite(next) : null);
-          });
-        }, { threshold: 0.4, rootMargin: '0px 0px -40px 0px' });
-        headlines.forEach(h => headlineObserver.observe(h));
-      }
-    })();
-  </script>
+  const langTabs = document.querySelectorAll('#kiLangToggle .ki-lang-tab');
+  const codeReact = document.getElementById('kiCodeReact');
+  const codeJs = document.getElementById('kiCodeJs');
+  langTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      langTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const isReact = tab.getAttribute('data-lang') === 'react';
+      codeReact.style.display = isReact ? 'block' : 'none';
+      codeJs.style.display = isReact ? 'none' : 'block';
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
