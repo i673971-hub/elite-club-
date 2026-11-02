@@ -2,51 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Intelligence · Elite Club</title>
 <meta name="description" content="AI automation, AI integration and AI agent development.">
 <meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#08090a">
+<script>document.documentElement.classList.add('js')</script>
 <link rel="icon" href="assets/logo.jpg">
-<style>
-@view-transition { navigation: auto; }
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
-}
-
-:root { color-scheme: dark; --bg: #08090a; --fg: #f7f8f8; --muted: #8a8f98; --line: #23252a; --accent: #7a9bb5; }
-* { box-sizing: border-box; margin: 0; }
-body {
-  min-height: 100dvh; display: flex; flex-direction: column;
-  background: var(--bg); color: var(--fg);
-  font: 400 1rem/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-header, main { width: 100%; max-width: 40rem; margin: 0 auto; padding-inline: 1.5rem; }
-header { padding-top: 1.5rem; }
-a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
-.home { display: inline-flex; align-items: center; gap: .6rem; color: var(--muted); font-size: .9rem; text-decoration: none; }
-.home:hover { color: var(--fg); }
-.home img { border-radius: 50%; }
-
-main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-block: 4rem; }
-h1 { font-size: clamp(2.5rem, 9vw, 4rem); font-weight: 600; letter-spacing: -.04em; line-height: 1; }
-ul { list-style: none; padding: 0; margin-block: 2.5rem 3rem; }
-li { padding-block: 1.1rem; border-top: 1px solid var(--line); font-size: 1.25rem; letter-spacing: -.01em; }
-li:last-child { border-bottom: 1px solid var(--line); }
-
-.cta { align-self: flex-start; padding: .8rem 1.25rem; border-radius: .5rem; background: var(--fg); color: var(--bg); font-weight: 500; text-decoration: none; }
-.cta:hover { opacity: .88; }
-.qr { width: 9rem; height: 9rem; margin-top: 2rem; border-radius: .75rem; }
-@media (max-width: 40rem) { .qr { display: none; } }
-
-/* Headline: letters fade and rise, 5-frame stagger at 30fps (1/6s). The line beneath types in once it finishes. */
-.l { display: inline-block; animation: rise .42s cubic-bezier(.2, .8, .2, 1) calc(var(--i) * 1s / 6) both; }
-@keyframes rise { from { opacity: 0; transform: translateY(.5em); } }
-.typed { margin-top: 1rem; color: var(--muted); animation: type .55s steps(25) 2.25s both; }
-@keyframes type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
-@media (prefers-reduced-motion: reduce) { .l, .typed { animation: none; } }
-</style>
+<link rel="stylesheet" href="assets/site.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -62,24 +25,152 @@ li:last-child { border-bottom: 1px solid var(--line); }
 </script>
 </head>
 <body>
-<header>
-  <a class="home" href="index.html"><img src="assets/logo.jpg" alt="" width="28" height="28">Elite Club</a>
-</header>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-auto" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 3v4h-4M6 21v-4h4"/></symbol><symbol id="i-agent" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7z"/></symbol><symbol id="i-plug" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/><path d="M11 7h2a2 2 0 0 1 2 2v4M13 17h-2a2 2 0 0 1-2-2v-4"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></symbol><symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol><symbol id="i-swirl" viewBox="0 0 24 24"><path d="M12 12a1.5 1.5 0 1 1 1.5 1.5"/><path d="M13.5 13.5A3.5 3.5 0 1 1 9 9a6 6 0 1 1-1 9"/></symbol><symbol id="i-doc" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 16V8l6 8V8"/></symbol><symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3 0-6 1-9z"/></symbol><symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3 3 7 3s7-1.3 7-3"/></symbol><symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 8v8M18 10c0 4-6 3-12 6"/></symbol><symbol id="i-cube" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></symbol><symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol><symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol></svg>
+<nav>
+  <div class="wrap">
+    <a class="home" href="index.html"><img src="assets/logo.jpg" alt="" width="28" height="28">Elite Club</a>
+    <ul>
+      <li class="has-menu">
+        <button class="navbtn" aria-expanded="false" aria-controls="m-product">Product<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
+        <div class="menu" id="m-product" hidden><p>System</p><a href="#integration">Intake</a><a href="#agents">Plan and monitor</a><a href="#automation">AI and automations</a><a href="build.html">Build, review and ship</a><p>Product</p><a href="integrations.html">Integrations</a><a href="pricing.html">Pricing</a><a href="changelog.html">Changelog</a><a href="https://wa.me/message/KOT4E55P6S3VF1">Documentation</a></div>
+      </li>
+      <li class="has-menu">
+        <button class="navbtn" aria-expanded="false" aria-controls="m-resources">Resources<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
+        <div class="menu" id="m-resources" hidden><a href="index.html">About</a><a href="https://wa.me/message/KOT4E55P6S3VF1">Customers</a><a href="https://wa.me/message/KOT4E55P6S3VF1">Careers</a><a href="https://wa.me/message/KOT4E55P6S3VF1">Contact</a></div>
+      </li>
+      <li><a href="https://wa.me/message/KOT4E55P6S3VF1">Customers</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="https://wa.me/message/KOT4E55P6S3VF1">Contact</a></li>
+    </ul>
+    <a class="btn" href="https://wa.me/message/KOT4E55P6S3VF1">Message us</a>
+    <button class="burger" aria-label="Menu" aria-expanded="false" aria-controls="m-sheet"><span></span><span></span></button>
+  </div>
+  <div class="sheet" id="m-sheet" hidden>
+    <div><p>System</p><a href="#integration">Intake</a><a href="#agents">Plan and monitor</a><a href="#automation">AI and automations</a><a href="build.html">Build, review and ship</a></div>
+    <div><p>Product</p><a href="integrations.html">Integrations</a><a href="pricing.html">Pricing</a><a href="changelog.html">Changelog</a><a href="https://wa.me/message/KOT4E55P6S3VF1">Documentation</a></div>
+    <div><p>Resources</p><a href="index.html">About</a><a href="https://wa.me/message/KOT4E55P6S3VF1">Customers</a><a href="https://wa.me/message/KOT4E55P6S3VF1">Careers</a><a href="https://wa.me/message/KOT4E55P6S3VF1">Contact</a></div>
+  </div>
+</nav>
+
 <main>
-  <h1>Intelligence</h1>
-  <script>
-    const h = document.querySelector('h1'), t = h.textContent;
-    h.setAttribute('aria-label', t);
-    h.innerHTML = [...t].map((c, i) => `<span class="l" style="--i:${i}" aria-hidden="true">${c}</span>`).join('');
-  </script>
-  <p class="typed">100+ businesses automated</p>
-  <ul>
-    <li>AI Automation</li>
-    <li>AI Integration</li>
-    <li>AI Agent Development</li>
-  </ul>
-  <a class="cta" href="https://wa.me/message/KOT4E55P6S3VF1">Message on WhatsApp</a>
-  <img class="qr" src="assets/whatsapp-qr.jpg" alt="WhatsApp QR code" width="144" height="144">
+<header class="hero">
+  <div class="wrap">
+    <span class="label">AI and automation</span>
+    <h1>Agents that take work from message to done</h1>
+
+    <div class="intro hero-intro">
+      <span class="label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>Intelligence</span>
+      <h2 style="margin-top:1rem">Colleagues that never clock out.</h2>
+      <p class="lede">We design the automations, integrations and agents your business runs on, grounded in your tools and your data.</p>
+      <details class="plus"><summary aria-label="More"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><p>Works with your tools, acts with your approval, and keeps a record of every step.</p></details>
+    </div>
+
+    <div class="win" aria-hidden="true">
+      <div class="bar"><b>Intelligence</b><span>Order 1842</span><span class="sp">2 / 15</span></div>
+      <div class="chat">
+        <div class="side"><span class="on">Inbox</span><span>Orders</span><span>Customers</span><span>Reports</span><span>Agents</span></div>
+        <div class="thread">
+          <div class="msg me">Customer 1842 can’t check out. Find the cause and reply.</div>
+          <div class="chip"><i class="row" style="all:unset;width:.5rem;height:.5rem;border-radius:50%;background:var(--green)"></i>Reading orders, logs and past tickets</div>
+          <div class="msg">The payment webhook timed out twice. I’ve retried the charge and drafted a reply for you to review.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid g4">
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i></i>New message<small>Slack</small></div><div class="row"><i class="g"></i>Ticket created<small>Now</small></div></div><div class="t"><h3>Create work from conversation</h3><p>Turn messages into scoped tasks with the context attached.</p></div></article>
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i class="g"></i>Shipped<small>12</small></div><div class="row"><i class="a"></i>At risk<small>3</small></div><div class="row"><i class="r"></i>Blocked<small>1</small></div></div><div class="t"><h3>Draft status updates</h3><p>Summarize progress, risks and blockers for your team to review.</p></div></article>
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i class="b"></i>Repeated theme<small>8</small></div><div class="row"><i class="b"></i>Repeated theme<small>5</small></div><div class="row"><i></i>Suggested for next week</div></div><div class="t"><h3>Plan the week ahead</h3><p>Read the backlog and suggest what should move first.</p></div></article>
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i class="g"></i>Order sync<small>Healthy</small></div><div class="row"><i class="a"></i>Invoices<small>Slow</small></div></div><div class="t"><h3>Check status anytime</h3><p>See what needs attention without asking around.</p></div></article>
+    </div>
+  </div>
+</header>
+
+<section class="block" id="automation">
+  <div class="wrap">
+    <div class="intro">
+      <span class="label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>AI Automation</span>
+      <h2 style="margin-top:1rem">Stay ahead of incoming work</h2>
+      <p class="lede">Routine work runs itself. Automations sort, route and follow up so nothing waits on you.</p>
+      <details class="plus"><summary aria-label="More"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><p>Schedules, triggers and rules, each with its full run history.</p></details>
+    </div>
+    <div class="loop" aria-hidden="true"><div>
+      <span>Triggered · intake check</span><span>Weekly · review</span><span>Daily · summary</span><span>On new order · confirm</span><span>Triggered · intake check</span><span>Weekly · review</span><span>Daily · summary</span><span>On new order · confirm</span>
+    </div></div>
+    <div class="grid g2">
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i></i>Submit button stuck on loading<small>Duplicate</small></div><div class="row"><i></i>App freezes on splash screen<small>Bug</small></div><div class="row"><i></i>Dashboard takes seconds to load<small>Infra</small></div></div><div class="t"><h3>Put recurring work on a loop</h3><p>Run on a schedule or when work matches your rules. Each pass builds on the last.</p></div></article>
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i class="r"></i>Critical customer<small>Escalate</small></div><div class="row"><i class="a"></i>Billing question<small>Finance</small></div><div class="row"><i class="g"></i>General request<small>Reply</small></div></div><div class="t"><h3>Put incoming requests on autopilot</h3><p>Prioritize key customers and route new work before it slows the team down.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="agents">
+  <div class="wrap">
+    <div class="intro">
+      <span class="label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7z"/></svg>AI Agent Development</span>
+      <h2 style="margin-top:1rem">Intelligence speaks your stack</h2>
+      <p class="lede">Agents that read your systems, do the work, and show every step for review.</p>
+      <a class="more" href="https://wa.me/message/KOT4E55P6S3VF1">Build an agent →</a>
+    </div>
+    <div class="win" aria-hidden="true">
+      <div class="bar"><b>Dimmed status cards</b><span class="sp tabs"><span class="on">Activity</span><span>Diff</span><span>Review</span></span></div>
+      <div class="diff">
+        <p>  .card { opacity: 1; }</p>
+        <p class="del">- .card.done { opacity: 1; }</p>
+        <p class="add">+ .card.done { opacity: .5; }</p>
+        <p class="add">+ .card.done:hover { opacity: .8; }</p>
+        <p>  .card.active { border-color: var(--accent); }</p>
+      </div>
+    </div>
+    <div class="grid g3">
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i class="g"></i>Assigned to Intelligence</div><div class="row"><i class="b"></i>Working in a sandbox</div></div><div class="t"><h3>Assign work to an agent</h3><p>Start from any task or conversation. It gathers context and comes back with a result.</p></div></article>
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i></i>Where is refund logic?<small>Ask</small></div><div class="row"><i class="g"></i>billing/refund.ts<small>Source</small></div></div><div class="t"><h3>Answers from the source</h3><p>Ask about your data and code and get answers grounded in what is really there.</p></div></article>
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i class="a"></i>Change requested</div><div class="row"><i class="g"></i>Updated inline</div></div><div class="t"><h3>Iterate with agents</h3><p>Leave feedback and watch the changes land, ready for your approval.</p></div></article>
+    </div>
+    <div class="win" style="margin-top:1rem" aria-hidden="true">
+      <div class="bar"><b>Work in motion</b><span class="sp tabs"><span class="on">All</span><span>Active</span><span>Backlog</span></span></div>
+      <div style="padding:1rem;display:grid;gap:.5rem">
+        <div class="row"><i class="g"></i>Order sync agent<small>Shipped</small></div>
+        <div class="row"><i class="b"></i>Support reply agent<small>Running</small></div>
+        <div class="row"><i class="a"></i>Report agent<small>Needs review</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="integration">
+  <div class="wrap">
+    <div class="intro">
+      <span class="label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/><path d="M11 7h2a2 2 0 0 1 2 2v4M13 17h-2a2 2 0 0 1-2-2v-4"/></svg>AI Integration</span>
+      <h2 style="margin-top:1rem">Open, by design</h2>
+      <p class="lede">Connect AI to the tools you already use, so everything stays in one shared system.</p>
+      <details class="plus"><summary aria-label="More"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><p>Slack, WhatsApp, Notion, spreadsheets, CRMs and any tool with an API.</p></details>
+    </div>
+    <div class="grid g2">
+      <article class="card"><div class="vis tall" aria-hidden="true"><div class="tiles"><div class="trow"><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-chat"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-bolt"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-pulse"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-layers"/></svg></span></div><div class="trow"><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-swirl"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-doc"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-flame"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-db"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-branch"/></svg></span></div><div class="trow"><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-cube"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-headset"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-mail"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg></span></div></div></div><div class="t"><h3>Bring more context in</h3><p>Connect your tools so every answer starts from the full picture.</p></div></article>
+      <article class="card"><div class="vis" aria-hidden="true"><div class="row"><i class="g"></i>API connected</div><div class="row"><i class="g"></i>Your tools, one system</div></div><div class="t"><h3>Take your context anywhere</h3><p>Give any compatible AI secure access to the data it needs.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Built for the future. Available today.</h2>
+    <div class="acts"><a class="btn lg" href="https://wa.me/message/KOT4E55P6S3VF1">Message on WhatsApp</a></div>
+    <img class="qr" src="assets/whatsapp-qr.jpg" alt="WhatsApp QR code" width="144" height="144">
+  </div>
+</section>
 </main>
+
+<footer>
+  <div class="wrap">
+    <div><a class="home" href="index.html"><img src="assets/logo.jpg" alt="" width="24" height="24">Elite Club</a></div>
+    <div><h4>Services</h4><ul><li><a href="#automation">AI Automation</a></li><li><a href="#integration">AI Integration</a></li><li><a href="#agents">AI Agent Development</a></li></ul></div>
+    <div><h4>Product</h4><ul><li><a href="integrations.html">Integrations</a></li><li><a href="build.html">Build</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="changelog.html">Changelog</a></li></ul></div>
+    <div><h4>Company</h4><ul><li><a href="index.html">Elite Club</a></li></ul></div>
+    <div><h4>Connect</h4><ul><li><a href="https://wa.me/message/KOT4E55P6S3VF1">WhatsApp</a></li></ul></div>
+  </div>
+</footer>
+<script src="assets/site.js"></script>
 </body>
 </html>
